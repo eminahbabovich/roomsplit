@@ -19,6 +19,7 @@ funkcionalnosti, model podataka i redoslijed rada.
 Verzije NE pretpostavljaj: pogledaj `backend/pom.xml` i `frontend/package.json`.
 Ne koristi zastarjele API-je (npr. `WebSecurityConfigurerAdapter`). Ako nisi siguran
 kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokumentaciju.
+(Get-Content CLAUDE.md) -replace '^- Mali, jasni git commitovi uz predloženu poruku\. Commit radim ja\.$', "- Mali, jasni git commitovi. Poruke commitova i komentari u kodu na bosanskom. Commit radim ja." | Set-Content CLAUDE.md -Encoding UTF8
 
 # Komande
 
