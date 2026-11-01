@@ -122,4 +122,4 @@ Format unosa:
   - Spring Data `Page` nema stabilan JSON, pa vraćam vlastiti `PageResponse`.
   - 403 za člana grupe koji mijenja tuđi trošak, 404 za stranca: član trošak ionako vidi, pa 404 ne bi imao smisla.
   - `HttpMessageNotReadableException` i `MethodArgumentTypeMismatchException` hvatam u `GlobalExceptionHandler`, da loš JSON, nepoznat enum ili loš datum daju 400 s porukom.
-- **Greške koje sam napravio:** u ovom koraku nijedna. `ExpenseFlowIntegrationTest` (s pravom bazom) još nisam pokrenuo.
+- **Greške koje sam napravio:** integracioni test izmjene troška je pao s `duplicate key ... expense_shares_expense_id_user_id_key`. Razlog nije bio u servisu nego u testu: `@Transactional` test stavlja sve zahtjeve u jedan persistence context, pa Hibernate nije obrisao stare dijelove prije upisa novih. U stvarnosti je svaki zahtjev zasebna transakcija. Test sada između zahtjeva radi `flush` i `clear`, što to oponaša (svih 8 testova prolazi). Pouka: integracioni test mora vjerno oponašati granice transakcija.
