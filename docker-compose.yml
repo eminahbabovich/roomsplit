@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17
+    container_name: roomsplit-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Postavi POSTGRES_DB u .env}
+      POSTGRES_USER: ${POSTGRES_USER:?Postavi POSTGRES_USER u .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Postavi POSTGRES_PASSWORD u .env}
+    ports:
+      - "5432:5432"
+    volumes:
+      - roomsplit-pgdata:/var/lib/postgresql/data
+
+volumes:
+  roomsplit-pgdata:
