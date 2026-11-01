@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.emin.roomsplit.auth.EmailAlreadyExistsException;
 import com.emin.roomsplit.auth.InvalidCredentialsException;
+import com.emin.roomsplit.group.AlreadyGroupMemberException;
+import com.emin.roomsplit.group.GroupNotFoundException;
 import com.emin.roomsplit.user.UserNotFoundException;
 
 @RestControllerAdvice
@@ -30,6 +32,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiError handleInvalidCredentials(InvalidCredentialsException ex) {
         return new ApiError(Instant.now(), HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(GroupNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleGroupNotFound(GroupNotFoundException ex) {
+        return new ApiError(Instant.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(AlreadyGroupMemberException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleAlreadyMember(AlreadyGroupMemberException ex) {
+        return new ApiError(Instant.now(), HttpStatus.CONFLICT.value(), ex.getMessage(), null);
     }
 
     // Token je važeći, ali korisnik je u međuvremenu obrisan
