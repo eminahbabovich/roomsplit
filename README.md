@@ -20,7 +20,7 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Verzionisane migracije baze (Flyway), tabela `users` | ✅ gotovo |
 | Health endpoint `GET /api/health` s integracionim testom | ✅ gotovo |
 | Registracija (`POST /api/auth/register`, BCrypt, validacija, 409 za zauzet email) | ✅ gotovo |
-| Prijava i JWT | ⏳ faza 2: Autentikacija |
+| Prijava (`POST /api/auth/login`), JWT (HS256, istek 60 min), zaštićen `GET /api/users/me`, CORS | ✅ gotovo |
 | Grupe, članstvo i pridruživanje kodom | ⏳ faza 3: Grupe |
 | Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ⏳ faza 4: Troškovi i balansi |
 | Balansi i algoritam poravnanja (minimalan broj uplata) | ⏳ faza 4: Troškovi i balansi |
@@ -52,6 +52,8 @@ Potrebno: Java 21, Docker Desktop. (Node.js treba tek kad frontend dobije sadrž
    ```powershell
    Copy-Item .env.example .env
    ```
+   U `.env` zamijeni i `JWT_SECRET` svojim dugim nasumičnim nizom (najmanje 32 znaka; primjer
+   kako ga generisati je u `.env.example`). Aplikacija ne starta ako je ključ prekratak.
 2. **Pokreni bazu:**
    ```powershell
    docker compose up -d

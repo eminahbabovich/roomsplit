@@ -44,6 +44,36 @@ sequenceDiagram
 Napomena: 401 vraća Security filter prije kontrolera, pa 401 samo po sebi ne dokazuje da je
 kontroler ispravno povezan. Zato endpoint pokriva test (`HealthControllerTest`) s oba slučaja.
 
+## Autentikacija (JWT)
+
+```mermaid
+sequenceDiagram
+    participant K as Klijent
+    participant A as AuthController / AuthService
+    participant T as TokenService
+    participant F as Security filter (JwtDecoder)
+    participant U as UserController
+    K->>A: POST /api/auth/login {email, password}
+    A->>A: nađi korisnika, BCrypt provjera lozinke
+    A->>T: generateToken(user)
+    T-->>A: JWT (subject = id korisnika, potpisan HS256)
+    A-->>K: 200 {accessToken, tokenType, expiresInSeconds, user}
+    K->>F: GET /api/users/me + Authorization: Bearer token
+    F->>F: provjeri potpis i istek
+    alt token nevažeći ili istekao
+        F-->>K: 401
+    else token važeći
+        F->>U: zahtjev s Jwt u Security kontekstu
+        U-->>K: 200 {id, email, displayName, ...}
+    end
+```
+
+- Token potpisujemo i provjeravamo istim tajnim ključem (`JWT_SECRET`, najmanje 32 znaka) preko
+  Spring Securityjevog `oauth2ResourceServer`-a (Nimbus), pa ne pišemo vlastiti filter.
+- U tokenu je samo `subject` (id korisnika) i vremena izdavanja/isteka; lozinka ni hash nikad.
+- Serveru ne treba sesija: svaki zahtjev nosi token (`STATELESS`).
+- CORS dozvoljava origin iz `CORS_ALLOWED_ORIGINS` (podrazumijevano `http://localhost:5173`, Vite).
+
 ## Rukovanje greškama
 
 Sve greške prolaze kroz `GlobalExceptionHandler` (`@RestControllerAdvice`) i vraćaju isti oblik
@@ -53,7 +83,9 @@ Sve greške prolaze kroz `GlobalExceptionHandler` (`@RestControllerAdvice`) i vr
 |---|---|
 | Neispravan ulaz (`@Valid`) | 400 + `fieldErrors` po polju |
 | Email već postoji | 409 |
-| Nije prijavljen | 401 (`SecurityConfig`) |
+| Pogrešan email ili lozinka pri prijavi | 401 (ista poruka za oba slučaja) |
+| Nema tokena ili je nevažeći/istekao | 401 (`SecurityConfig`) |
+| Token važi, ali korisnik više ne postoji | 404 |
 
 ## Model podataka
 
@@ -125,7 +157,8 @@ tačno na originalni iznos, bez gubitka centa).
 |---|---|---|---|
 | GET | `/api/health` | provjera da servis radi | ✅ |
 | POST | `/api/auth/register` | registracija (201, 400 validacija, 409 zauzet email) | ✅ |
-| POST | `/api/auth/login` | prijava, vraća JWT | ⏳ |
+| POST | `/api/auth/login` | prijava, vraća JWT (401 za pogrešan email ili lozinku) | ✅ |
+| GET | `/api/users/me` | prijavljeni korisnik (traži `Authorization: Bearer`) | ✅ |
 | POST | `/api/groups` | nova grupa | ⏳ |
 | POST | `/api/groups/join` | pridruži se kodom | ⏳ |
 | GET | `/api/groups` | moje grupe | ⏳ |

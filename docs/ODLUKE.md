@@ -75,7 +75,25 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
 - **Alternativa:** `ProblemDetail` (RFC 9457, ugrađen u Spring), standardizovan format; razmotrit ćemo
   ga ako ApiError postane preuzak.
 
-## 9. Testiranje web sloja s `@WebMvcTest`
+## 9. JWT preko Spring Securityjevog resource servera, ne vlastiti filter
+
+- **Odluka:** tokene potpisujemo HS256 (zajednički tajni ključ) i provjeravamo ih ugrađenim
+  `oauth2ResourceServer().jwt()`. Ključ je samo u `JWT_SECRET` i aplikacija ne starta ako je kraći od 32 znaka.
+- **Zašto:** provjera potpisa i isteka je sigurnosno osjetljiva i bolje je koristiti provjeren kod
+  nego pisati svoj filter. Jedan backend potpisuje i provjerava, pa simetričan ključ je dovoljan.
+- **Šta je u tokenu:** samo id korisnika (`sub`) i vremena. Ne email (može se promijeniti) ni hash.
+- **Alternativa:** RS256 (par ključeva) ima smisla kad tokene provjerava više servisa; ili
+  biblioteka `jjwt` s vlastitim filterom (više koda, više mjesta za grešku).
+- **Poznato ograničenje:** nema refresh tokena ni odjave na serveru; token važi 60 minuta.
+
+## 10. Ista poruka za pogrešan email i pogrešnu lozinku
+
+- **Odluka:** prijava vraća 401 "Pogrešan email ili lozinka" u oba slučaja.
+- **Zašto:** drugačije poruke bi otkrile napadaču koji emailovi imaju nalog.
+- **Poznato ograničenje:** razlika u vremenu odgovora (BCrypt se računa samo ako korisnik postoji) i
+  nema ograničenja broja pokušaja; moguće poboljšanje kasnije.
+
+## 11. Testiranje web sloja s `@WebMvcTest`
 
 - **Odluka:** kontrolere testiramo s `@WebMvcTest` + `MockMvc`, a Security ponašanje s `@WithMockUser`.
 - **Zašto:** podiže se samo web sloj (bez baze), pa su testovi brzi. Testiramo i uspješan slučaj

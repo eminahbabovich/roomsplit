@@ -60,3 +60,20 @@ Format unosa:
   - Tri vrste testova za istu funkcionalnost: unit (Mockito, bez Springa) za servis, `@WebMvcTest` + `@MockitoBean` za HTTP sloj, i `@SpringBootTest` s pravom bazom koji se vraća u prvobitno stanje (`@Transactional`).
   - Lombok `@RequiredArgsConstructor` pravi konstruktor za `final` polja, pa dobijam constructor injection bez ručnog koda.
 - **Greške koje sam napravio:** nije bilo grešaka u ovom koraku. Integracioni test s bazom još nisam pokrenuo (traži učitan `.env`).
+
+---
+
+## 2026-11-01 (nedjelja, 13:10) - Faza 2 (Autentikacija): prijava i JWT
+
+- **Naučio sam:**
+  - JWT je potpisan zapis (header.payload.potpis). Server ga potpiše tajnim ključem pri prijavi, a na svakom zahtjevu samo provjeri potpis i istek, pa ne treba sesija (`STATELESS`). Payload nije šifrovan, samo potpisan, zato u njega ne stavljam ništa osjetljivo.
+  - U tokenu držim samo `sub` (id korisnika) i vremena izdavanja/isteka. Id jer se email može promijeniti.
+  - Tokene izdajem s `JwtEncoder`, a provjeru radi Spring Security preko `oauth2ResourceServer().jwt()` i `JwtDecoder`, bez vlastitog filtera. Isti HS256 ključ za oba. U Spring Boot 4 starter se zove `spring-boot-starter-security-oauth2-resource-server`.
+  - Ključ (`JWT_SECRET`) mora imati najmanje 32 znaka; ako je kraći, `JwtConfig` baci izuzetak pri startu, pa aplikacija ne radi sa slabim ključem. Nikad ga ne stavljam u kod, samo u `.env` i lažnu vrijednost u `.env.example`.
+  - Pri prijavi vraćam istu poruku "Pogrešan email ili lozinka" za pogrešan email i pogrešnu lozinku, da napadač ne može saznati koji emailovi postoje.
+  - `@AuthenticationPrincipal Jwt` u kontroleru daje token prijavljenog korisnika; id uzimam iz tokena, ne iz zahtjeva, pa niko ne može tražiti tuđe podatke (`/api/users/me`).
+  - Bez `authenticationEntryPoint` Security vraća 403 za neprijavljene; s `HttpStatusEntryPoint(UNAUTHORIZED)` vraća 401, što je ispravno.
+  - CORS: browser blokira zahtjeve s drugog origina (React na 5173, API na 8080) dok server ne dozvoli taj origin. Dozvoljene origine čitam iz `CORS_ALLOWED_ORIGINS`.
+  - Testovi: istekao token testiram tako da ručno napravim token izdat prije 2 sata (provjera isteka ima toleranciju sata od 60 sekundi); token potpisan tuđim ključem se odbija; `jwt()` post-procesor u `MockMvc` glumi prijavljenog korisnika.
+  - `application-test.properties` s izmišljenim ključem i `@ActiveProfiles("test")` omogućavaju da testovi ne ovise o mom `.env` za JWT.
+- **Greške koje sam napravio:** test isteka tokena je prvo pao (`expiresAt must be after issuedAt`), jer encoder ne dozvoljava token koji ističe prije izdavanja. Riješio sam ga ručnim kreiranjem tokena iz prošlosti.
