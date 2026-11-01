@@ -4,7 +4,7 @@ Aplikacija za dijeljenje zajedničkih troškova među cimerima i prijateljima.
 Vodi troškove u grupi, računa ko kome koliko duguje i predlaže najmanji broj
 uplata za poravnanje.
 
-> **Status:** u izradi (sedmica 1 od 5 završena). **Live demo:** _uskoro_
+> **Status:** u izradi (faza 1 od 5 skoro gotova). **Live demo:** _uskoro_
 
 ## Problem
 
@@ -19,11 +19,11 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Docker Compose za lokalni PostgreSQL | ✅ gotovo |
 | Verzionisane migracije baze (Flyway), tabela `users` | ✅ gotovo |
 | Health endpoint `GET /api/health` s integracionim testom | ✅ gotovo |
-| Registracija i prijava (JWT, BCrypt) | ⏳ sedmica 2 |
-| Grupe, članstvo i pridruživanje kodom | ⏳ sedmica 3 |
-| Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ⏳ sedmica 4 |
-| Balansi i algoritam poravnanja (minimalan broj uplata) | ⏳ sedmica 4 |
-| React UI i prvi deploy | ⏳ sedmica 5 |
+| Registracija i prijava (JWT, BCrypt) | ⏳ faza 2: Autentikacija |
+| Grupe, članstvo i pridruživanje kodom | ⏳ faza 3: Grupe |
+| Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ⏳ faza 4: Troškovi i balansi |
+| Balansi i algoritam poravnanja (minimalan broj uplata) | ⏳ faza 4: Troškovi i balansi |
+| React UI i prvi deploy | ⏳ faza 5: Frontend i deploy |
 
 ## Tehnologije
 
@@ -79,7 +79,7 @@ docs/       Arhitektura i tehničke odluke
 docker-compose.yml   Lokalni PostgreSQL
 .env.example         Primjer varijabli okruženja (bez stvarnih tajni)
 LEARNING_LOG.md      Dnevnik učenja tokom izrade
-PROJECT_PLAN.md      Plan projekta po sedmicama
+PROJECT_PLAN.md      Plan projekta po fazama
 ```
 
 ## Screenshotovi

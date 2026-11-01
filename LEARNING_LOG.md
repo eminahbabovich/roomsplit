@@ -5,13 +5,13 @@ Svaki unos ima datum, vrijeme i temu sesije. Dopisuje se na kraju svake sesije.
 
 Format unosa:
 
-## YYYY-MM-DD (dan, HH:MM) - Sedmica N: tema
+## YYYY-MM-DD (dan, HH:MM) - Faza N: tema
 - **Naučio sam:** konkretni koncepti i odluke, uz kratko "zašto"
 - **Greške koje sam napravio:** šta je pošlo po zlu i kako sam to riješio
 
 ---
 
-## 2026-11-01 (nedjelja, 12:22) - Sedmica 1: Postgres u Dockeru, Flyway, prvi endpoint
+## 2026-11-01 (nedjelja, 12:22) - Faza 1 (Temelji): Postgres u Dockeru, Flyway, prvi endpoint
 
 - **Naučio sam:**
   - Postgres pokrećem kroz `docker-compose.yml`; podaci žive u named volumeu, pa `docker compose down` briše kontejner, a podaci ostaju. `down -v` briše i volume, tj. sve podatke.

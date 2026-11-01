@@ -47,7 +47,7 @@ kontroler ispravno povezan. Zato endpoint pokriva test (`HealthControllerTest`) 
 ## Model podataka
 
 Implementirana je tabela `users` (migracija `V1__create_users.sql`). Ostale tabele su
-_planirane_ i dolaze u sedmicama 3 i 4.
+_planirane_ i dolaze u fazama 3 (Grupe) i 4 (Troškovi i balansi).
 
 ```mermaid
 erDiagram

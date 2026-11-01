@@ -1,11 +1,16 @@
 # Plan portfolija
 
-Cilj: 2 live projekta + portfolio sajt za 10-12 sedmica (3 dana x 3 sata sedmično).
+Cilj: 2 live projekta + portfolio sajt.
 Backend: Spring Boot (učim). Frontend: React (znam).
+
+Rad je podijeljen na **faze**, ne na sedmice. Faze se rade redom, ali tempo je
+neujednačen: nekad se uradi veliki komad, nekad ništa. Faza je gotova kad je zadovoljen
+njen kriterij "gotovo", a ne kad prođe neko vrijeme. Status svake faze vodi se u tabeli
+ispod i u `README.md`.
 
 ---
 
-# PROJEKAT 1: RoomSplit (sedmice 1-5)
+# PROJEKAT 1: RoomSplit (faze 1-5)
 
 **Problem:** cimeri i studenti dijele troškove (hrana, račun za struju, putovanje) i
 stalno se zbunjuju ko kome koliko duguje. Aplikacija vodi zajedničke troškove u
@@ -53,17 +58,18 @@ Invarijanta: za svaki trošak `SUM(share_amount) = amount`.
 | GET | /api/groups/{id}/settle-suggestions | predložena poravnanja |
 | POST | /api/groups/{id}/settlements | zabilježi uplatu |
 
-## Plan po sedmicama
+## Faze
 
-| Sedmica | Fokus | Šta ja učim |
-|---|---|---|
-| 1 | Setup (Initializr, Postgres u Dockeru, Flyway), prvi endpoint, prvi test | Spring Boot anatomija, slojevi, DI, `@RestController`, DTO |
-| 2 | Korisnici + Spring Security + JWT | Filter chain, `PasswordEncoder`, stateless auth, CORS |
-| 3 | Grupe i članstvo, autorizacija po grupi | JPA relacije, `@Transactional`, validacija, `@RestControllerAdvice` |
-| 4 | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija |
-| 5 | React UI + **prvi deploy** (Render/Railway + Vercel/Netlify, Neon/Supabase) | CORS u produkciji, env varijable, Dockerfile, DNS |
+| Faza | Naziv | Fokus | Šta ja učim | Status |
+|---|---|---|---|---|
+| 1 | Temelji | Setup (Initializr, Postgres u Dockeru, Flyway), prvi endpoint, prvi test | Spring Boot anatomija, slojevi, DI, `@RestController`, DTO | skoro gotovo (preostaje cijeli `mvnw test`) |
+| 2 | Autentikacija | Korisnici + Spring Security + JWT | Filter chain, `PasswordEncoder`, stateless auth, CORS | |
+| 3 | Grupe | Grupe i članstvo, autorizacija po grupi | JPA relacije, `@Transactional`, validacija, `@RestControllerAdvice` | |
+| 4 | Troškovi i balansi | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija | |
+| 5 | Frontend i deploy | React UI + **prvi deploy** (Render/Railway + Vercel/Netlify, Neon/Supabase) | CORS u produkciji, env varijable, Dockerfile, DNS | |
 
-Pravilo: deploy u sedmici 5, ne na kraju. Prvi deploy uvijek donese neočekivane greške.
+Pravilo: prvi deploy se radi u fazi 5, ne na kraju cijelog portfolija. Prvi deploy uvijek
+donese neočekivane greške.
 
 ## Definicija "gotovo" za Projekat 1
 
@@ -75,7 +81,7 @@ Pravilo: deploy u sedmici 5, ne na kraju. Prvi deploy uvijek donese neočekivane
 
 ---
 
-# PROJEKAT 2: SlotBook (sedmice 6-10)
+# PROJEKAT 2: SlotBook (faze 1-5)
 
 **Problem:** zajednički resursi (učionice za učenje, prostor za sastanke, termini
 konsultacija, teretana) rezerviraju se preko poruka i tabela, uz preklapanja i zabune.
@@ -97,19 +103,19 @@ admin panel. Pokriva ono što RoomSplit ne pokriva.
 7. Upload slike resursa.
 8. Admin pregled: statistika rezervacija.
 
-## Plan po sedmicama (okvirno, detalji kad završimo P1)
+## Faze (okvirno, detalji kad završimo P1)
 
-| Sedmica | Fokus |
+| Faza | Fokus |
 |---|---|
-| 6 | Model, uloge, resursi (CRUD), method security (`@PreAuthorize`) |
-| 7 | Logika termina i preklapanja, testovi vremena |
-| 8 | Konkurentnost, `@Scheduled`, email |
-| 9 | React kalendar + admin |
-| 10 | Deploy, README, screenshotovi |
+| 1 | Model, uloge, resursi (CRUD), method security (`@PreAuthorize`) |
+| 2 | Logika termina i preklapanja, testovi vremena |
+| 3 | Konkurentnost, `@Scheduled`, email |
+| 4 | React kalendar + admin |
+| 5 | Deploy, README, screenshotovi |
 
 ---
 
-# Sedmice 11-12: Portfolio sajt
+# Završna faza: Portfolio sajt
 
 React stranica: o meni, 2 projekta (opis problema, stack, live demo, GitHub),
 kontakt, CV. Vlastiti domen (Cloudflare Registrar ili Namecheap), hosting na
