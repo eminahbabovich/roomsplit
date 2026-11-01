@@ -2,6 +2,7 @@ package com.emin.roomsplit.expense;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -34,6 +35,15 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             @Param("to") LocalDate to,
             @Param("categories") Collection<ExpenseCategory> categories,
             Pageable pageable);
+
+    // Zbir plaćenog po korisniku računa baza (SUM + GROUP BY), ne učitavamo sve troškove u memoriju
+    @Query("""
+            select new com.emin.roomsplit.expense.UserTotal(e.paidBy.id, sum(e.amount))
+            from Expense e
+            where e.group.id = :groupId
+            group by e.paidBy.id
+            """)
+    List<UserTotal> sumPaidByUser(@Param("groupId") Long groupId);
 
     @Query("""
             select e from Expense e

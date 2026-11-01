@@ -9,6 +9,14 @@ import org.springframework.data.repository.query.Param;
 
 public interface ExpenseShareRepository extends JpaRepository<ExpenseShare, Long> {
 
+    @Query("""
+            select new com.emin.roomsplit.expense.UserTotal(s.user.id, sum(s.shareAmount))
+            from ExpenseShare s
+            where s.expense.group.id = :groupId
+            group by s.user.id
+            """)
+    List<UserTotal> sumOwedByUser(@Param("groupId") Long groupId);
+
     // Dijelovi svih troškova sa stranice jednim upitom (umjesto jednog upita po trošku)
     @Query("select s from ExpenseShare s join fetch s.user where s.expense.id in :expenseIds order by s.id")
     List<ExpenseShare> findAllByExpenseIds(@Param("expenseIds") Collection<Long> expenseIds);
