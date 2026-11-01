@@ -107,3 +107,19 @@ Format unosa:
   - Zbog `equals` kod `BigDecimal` (2.5 i 2.50 nisu jednaki) u testovima koristim `isEqualByComparingTo` kad poredim vrijednost, a `isEqualTo` samo kad mi je bitna i skala.
   - Test koji prolazi kroz hiljade kombinacija iznosa i broja ljudi (zbir tačan, razlika među dijelovima najviše 1 fening) dokazuje invarijantu bolje od nekoliko ručnih primjera.
 - **Greške koje sam napravio:** u ovom koraku nijedna.
+
+---
+
+## 2026-11-01 (nedjelja, 13:42) - Faza 4 (Troškovi i balansi): modeli i API za troškove
+
+- **Naučio sam:**
+  - `@OneToMany(mappedBy = "expense")` je "pogled" na vezu čiji je strani ključ u drugoj tabeli; vlasnik veze je polje `expense` u `ExpenseShare`. `cascade = ALL` prenosi snimanje i brisanje na dijelove, a `orphanRemoval` briše dio koji izbacim iz liste.
+  - Dvosmjernu vezu održavam kroz metodu `addShare` (konstruktor dijela je package-private), a listu vraćam kao `unmodifiableList`, da je niko ne mijenja mimo te metode.
+  - Pravila držim i u bazi: `CHECK (amount > 0)`, `UNIQUE` i složeni strani ključ `(group_id, paid_by) -> group_members` garantuju da platilac pripada baš toj grupi, čak i ako kod pogriješi. Zbir dijelova ne može u `CHECK`, pa ga čuva servis i testovi.
+  - Pri izmjeni troška moram `flush` poslije `clearShares()`, jer Hibernate radi INSERT prije DELETE pa bi `UNIQUE (expense_id, user_id)` puknuo kad ostaju isti učesnici.
+  - Paginacija: `join fetch` kolekcije uz `Pageable` natjera Hibernate da paginira u memoriji. Zato stranicu učitavam s fetch-om samo "prema jednom" veza, a dijelove svih troškova sa stranice jednim dodatnim upitom (`in :ids`).
+  - `null` parametri u JPQL upitu zadaju problem PostgreSQL-u (ne može odrediti tip), pa umjesto njih koristim krajnje datume i listu kategorija.
+  - Spring Data `Page` nema stabilan JSON, pa vraćam vlastiti `PageResponse`.
+  - 403 za člana grupe koji mijenja tuđi trošak, 404 za stranca: član trošak ionako vidi, pa 404 ne bi imao smisla.
+  - `HttpMessageNotReadableException` i `MethodArgumentTypeMismatchException` hvatam u `GlobalExceptionHandler`, da loš JSON, nepoznat enum ili loš datum daju 400 s porukom.
+- **Greške koje sam napravio:** u ovom koraku nijedna. `ExpenseFlowIntegrationTest` (s pravom bazom) još nisam pokrenuo.

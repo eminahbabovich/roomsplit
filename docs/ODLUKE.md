@@ -134,3 +134,23 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   dobiti feninga više. Za iznose koji su u feninzima to je zanemarivo; ako zatreba, ostatak se može rotirati.
 - **Alternativa:** `BigDecimal.divide` s `RoundingMode`, uz ručno "ispravljanje" zadnjeg dijela. Radi,
   ali je lakše pogriješiti; računanje u feninzima je jednostavnije za dokazati testom.
+
+## 14. Troškovi: autor, pravila u bazi i paginacija
+
+- **Autor i platilac su različiti pojmovi.** Platilac (`paid_by`) je ko je platio, autor (`created_by`) je ko je unio
+  trošak. Samo autor mijenja i briše; ostali članovi dobijaju **403** (za razliku od stranaca koji dobijaju 404),
+  jer član grupe trošak ionako vidi.
+- **Pravila integriteta su u bazi:** `CHECK (amount > 0)`, `UNIQUE (expense_id, user_id)` i složeni strani ključevi
+  `(group_id, paid_by) -> group_members`. Servis ih provjerava prvi radi jasnih poruka, ali ih baza brani i od
+  greške u kodu. Invarijanta `SUM(share_amount) = amount` ne može u običan `CHECK` (više redova), pa je čuva servis
+  preko `ExpenseSplitter`-a i testovi.
+- **Izmjena = zamjena dijelova.** `clearShares()` + `saveAndFlush` brišu stare dijelove prije upisa novih. Bez `flush`
+  Hibernate radi INSERT prije DELETE i `UNIQUE (expense_id, user_id)` bi pukao kad ostaju isti učesnici.
+- **Paginacija bez N+1 i bez paginacije u memoriji:** upit za stranicu fetch-uje samo veze "prema jednom"
+  (platilac, autor), a dijelovi svih troškova sa stranice dolaze **jednim dodatnim upitom** (`in :ids`).
+  Fetch liste u istom upitu uz `Pageable` natjerao bi Hibernate da učita sve i paginira u memoriji.
+- **Filteri bez `null` parametara:** nedostajući datum zamjenjuju krajnje vrijednosti (1900-01-01 i 9999-12-31), a
+  kategorija se šalje kao lista (`in :categories`, sve kategorije kad filter nije zadan). Tako nema `null`
+  parametara čiji tip PostgreSQL ne može odrediti.
+- **Vlastiti `PageResponse`:** oblik JSON-a stranice određujemo mi, ne Spring Data. `size` je ograničen na 100.
+- **Dio od 0.00 se ne upisuje** (npr. 0.01 KM na troje), jer je u bazi `share_amount > 0`.

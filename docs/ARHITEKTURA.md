@@ -88,6 +88,9 @@ Sve greške prolaze kroz `GlobalExceptionHandler` (`@RestControllerAdvice`) i vr
 | Token važi, ali korisnik više ne postoji | 404 |
 | Grupa ne postoji ili korisnik nije član | 404 (ista poruka za oba slučaja) |
 | Već si član grupe | 409 |
+| Nevaljana podjela (zbir, učesnik van grupe, više od 2 decimale) | 400 |
+| Član grupe mijenja ili briše tuđi trošak | 403 |
+| Trošak ne postoji | 404 |
 
 ## Model podataka
 
@@ -165,11 +168,34 @@ tačno na originalni iznos, bez gubitka feninga).
 | POST | `/api/groups/join` | pridruži se kodom (200, 404 pogrešan kod, 409 već član) | ✅ |
 | GET | `/api/groups` | moje grupe | ✅ |
 | GET | `/api/groups/{id}` | detalji (samo članovi, ostali dobijaju 404) | ✅ |
-| POST | `/api/groups/{id}/expenses` | novi trošak | ⏳ |
-| GET | `/api/groups/{id}/expenses?page=&size=` | lista, paginirano | ⏳ |
-| PUT/DELETE | `/api/groups/{id}/expenses/{eid}` | izmjena/brisanje | ⏳ |
+| POST | `/api/groups/{id}/expenses` | novi trošak (201; 400 nevaljana podjela; 404 nisi član) | ✅ |
+| GET | `/api/groups/{id}/expenses?page=&size=&from=&to=&category=` | lista, paginirano i filtrirano | ✅ |
+| GET | `/api/groups/{id}/expenses/{eid}` | jedan trošak | ✅ |
+| PUT/DELETE | `/api/groups/{id}/expenses/{eid}` | izmjena (200) / brisanje (204), samo autor, ostali članovi 403 | ✅ |
 | GET | `/api/groups/{id}/balances` | balansi | ⏳ |
 | GET | `/api/groups/{id}/settle-suggestions` | predložena poravnanja | ⏳ |
 | POST | `/api/groups/{id}/settlements` | zabilježi uplatu | ⏳ |
 
 Svaki endpoint grupe provjerava da je prijavljeni korisnik član te grupe.
+
+## Troškovi: primjer zahtjeva
+
+`POST /api/groups/{id}/expenses` (isti oblik za `PUT`). Iznosi su u KM, najviše 2 decimale.
+
+```json
+{
+  "description": "Namirnice",
+  "amount": 100.00,
+  "paidBy": 1,
+  "category": "FOOD",
+  "expenseDate": "2026-11-01",
+  "splitType": "EQUAL",
+  "participants": [{ "userId": 1 }, { "userId": 2 }, { "userId": 3 }]
+}
+```
+
+- `splitType: EQUAL` dijeli jednako (100.00 na troje = 33.34 + 33.33 + 33.33).
+- `splitType: EXACT` traži `amount` za svakog učesnika (`{ "userId": 1, "amount": 60.00 }`), a zbir mora biti tačno jednak ukupnom iznosu.
+- `category` je neobavezna (podrazumijevano `OTHER`): `FOOD`, `UTILITIES`, `RENT`, `TRANSPORT`, `ENTERTAINMENT`, `OTHER`.
+- Platilac (`paidBy`) i svi učesnici moraju biti članovi grupe. Autor unosa je korisnik iz tokena.
+- Lista vraća `{ items, page, size, totalItems, totalPages }`, sortirano po datumu (najnoviji prvi); `size` je najviše 100.
