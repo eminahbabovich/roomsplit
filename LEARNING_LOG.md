@@ -24,6 +24,7 @@ Format unosa:
   - 401 na `/api/health` ne dokazuje da kontroler radi: Spring Security je filter ispred kontrolera i vraća 401 i za putanje koje ne postoje.
   - `@WebMvcTest` podiže samo web sloj (bez baze), za razliku od `@SpringBootTest` koji podiže cijelu aplikaciju. `MockMvc` šalje lažne HTTP zahtjeve, `@WithMockUser` glumi prijavljenog korisnika. Dva testa: prijavljen korisnik dobija 200 i `{"status":"UP"}`, neprijavljen dobija 401.
   - Test s constructor injectionom treba `@Autowired` na konstruktoru, inače JUnit ne zna odakle da uzme `MockMvc`.
+  - Cijeli `mvnw test` uključuje i `@SpringBootTest` (`RoomsplitApplicationTests`) koji podiže cijelu aplikaciju s pravom bazom i Flywayom; prolazak dokazuje da datasource, migracije i `ddl-auto=validate` rade zajedno, što `@WebMvcTest` ne može dokazati. Mana: test ovisi o lokalnoj bazi i env varijablama (kasnije Testcontainers).
   - Git radni tok: mali commitovi s porukama na bosanskom, prije svakog `git status` i `git diff --staged` da provjerim da nema tajni, push na kraju sesije.
 - **Greške koje sam napravio:**
   - Mislio sam da 401 znači da endpoint radi. Zapravo samo znači da je aplikacija pokrenuta i da je Security aktivan; da kontroler radi dokazuje tek test.

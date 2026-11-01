@@ -62,7 +62,7 @@ Invarijanta: za svaki trošak `SUM(share_amount) = amount`.
 
 | Faza | Naziv | Fokus | Šta ja učim | Status |
 |---|---|---|---|---|
-| 1 | Temelji | Setup (Initializr, Postgres u Dockeru, Flyway), prvi endpoint, prvi test | Spring Boot anatomija, slojevi, DI, `@RestController`, DTO | skoro gotovo (preostaje cijeli `mvnw test`) |
+| 1 | Temelji | Setup (Initializr, Postgres u Dockeru, Flyway), prvi endpoint, prvi test | Spring Boot anatomija, slojevi, DI, `@RestController`, DTO | ✅ gotovo |
 | 2 | Autentikacija | Korisnici + Spring Security + JWT | Filter chain, `PasswordEncoder`, stateless auth, CORS | |
 | 3 | Grupe | Grupe i članstvo, autorizacija po grupi | JPA relacije, `@Transactional`, validacija, `@RestControllerAdvice` | |
 | 4 | Troškovi i balansi | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija | |

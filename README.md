@@ -4,7 +4,7 @@ Aplikacija za dijeljenje zajedničkih troškova među cimerima i prijateljima.
 Vodi troškove u grupi, računa ko kome koliko duguje i predlaže najmanji broj
 uplata za poravnanje.
 
-> **Status:** u izradi (faza 1 od 5 skoro gotova). **Live demo:** _uskoro_
+> **Status:** u izradi (faza 1 od 5 gotova, sljedeća: Autentikacija). **Live demo:** _uskoro_
 
 ## Problem
 
