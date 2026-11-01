@@ -86,11 +86,13 @@ Sve greške prolaze kroz `GlobalExceptionHandler` (`@RestControllerAdvice`) i vr
 | Pogrešan email ili lozinka pri prijavi | 401 (ista poruka za oba slučaja) |
 | Nema tokena ili je nevažeći/istekao | 401 (`SecurityConfig`) |
 | Token važi, ali korisnik više ne postoji | 404 |
+| Grupa ne postoji ili korisnik nije član | 404 (ista poruka za oba slučaja) |
+| Već si član grupe | 409 |
 
 ## Model podataka
 
-Implementirana je tabela `users` (migracija `V1__create_users.sql`). Ostale tabele su
-_planirane_ i dolaze u fazama 3 (Grupe) i 4 (Troškovi i balansi).
+Implementirane su tabele `users` (V1), `groups` i `group_members` (V2). Ostale tabele su
+_planirane_ i dolaze u fazi 4 (Troškovi i balansi).
 
 ```mermaid
 erDiagram
@@ -159,10 +161,10 @@ tačno na originalni iznos, bez gubitka centa).
 | POST | `/api/auth/register` | registracija (201, 400 validacija, 409 zauzet email) | ✅ |
 | POST | `/api/auth/login` | prijava, vraća JWT (401 za pogrešan email ili lozinku) | ✅ |
 | GET | `/api/users/me` | prijavljeni korisnik (traži `Authorization: Bearer`) | ✅ |
-| POST | `/api/groups` | nova grupa | ⏳ |
-| POST | `/api/groups/join` | pridruži se kodom | ⏳ |
-| GET | `/api/groups` | moje grupe | ⏳ |
-| GET | `/api/groups/{id}` | detalji (samo članovi) | ⏳ |
+| POST | `/api/groups` | nova grupa (201, vlasnik postaje OWNER) | ✅ |
+| POST | `/api/groups/join` | pridruži se kodom (200, 404 pogrešan kod, 409 već član) | ✅ |
+| GET | `/api/groups` | moje grupe | ✅ |
+| GET | `/api/groups/{id}` | detalji (samo članovi, ostali dobijaju 404) | ✅ |
 | POST | `/api/groups/{id}/expenses` | novi trošak | ⏳ |
 | GET | `/api/groups/{id}/expenses?page=&size=` | lista, paginirano | ⏳ |
 | PUT/DELETE | `/api/groups/{id}/expenses/{eid}` | izmjena/brisanje | ⏳ |
