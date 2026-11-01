@@ -1,18 +1,13 @@
 # Dnevnik učenja
 
-Popunjava se na kraju svake sesije (Claude ga dopisuje, ja provjeravam i ispravljam
-svojim riječima).
+Hronološki zapis šta sam naučio tokom izrade portfolija (RoomSplit, pa SlotBook).
+Svaki unos ima datum, vrijeme i temu sesije. Dopisuje se na kraju svake sesije.
 
 Format unosa:
 
-## YYYY-MM-DD - tema sesije
-- **Naučio sam:** ...
-- **Greške koje sam napravio:** ...
-- **Pitanja za ponavljanje (kao na intervjuu):**
-  1. ...
-  2. ...
-  3. ...
-- **Šta mi još nije jasno:** ...
+## YYYY-MM-DD (dan, HH:MM) - Sedmica N: tema
+- **Naučio sam:** konkretni koncepti i odluke, uz kratko "zašto"
+- **Greške koje sam napravio:** šta je pošlo po zlu i kako sam to riješio
 
 ---
 
@@ -22,18 +17,14 @@ Format unosa:
   - Postgres pokrećem kroz `docker-compose.yml`; podaci žive u named volumeu, pa `docker compose down` briše kontejner, a podaci ostaju. `down -v` briše i volume, tj. sve podatke.
   - Tajne (lozinka baze) idu u `.env` koji je u `.gitignore`; u repo ide samo `.env.example` s lažnim vrijednostima.
   - Spring Boot ne čita `.env` sam, čita varijable okruženja procesa. U `application.properties` koristim `${POSTGRES_DB}` placeholdere.
-  - `ddl-auto=validate` + Flyway: šemu mijenjaju samo verzionisane SQL migracije (`V1__create_users.sql`), a Hibernate samo provjerava da se entiteti slažu s bazom.
+  - `ddl-auto=validate` + Flyway: šemu mijenjaju samo verzionisane SQL migracije (`V1__create_users.sql`), a Hibernate samo provjerava da se entiteti slažu s bazom. `update` bi tiho mijenjao bazu mimo historije promjena.
   - Primijenjena migracija se ne mijenja (checksum u `flyway_schema_history`); nova promjena ide u `V2__...`.
-  - `GENERATED ALWAYS AS IDENTITY`, `UNIQUE` na emailu (baza brani duplikate), `TIMESTAMPTZ` za vrijeme, u bazi čuvam `password_hash`, nikad lozinku.
-  - DTO kao Java `record` (`HealthResponse`) i `@RestController`/`@GetMapping`; kontroler nema poslovne logike.
+  - `GENERATED ALWAYS AS IDENTITY`, `UNIQUE` na emailu (baza brani duplikate i kod istovremenih zahtjeva), `TIMESTAMPTZ` za vrijeme; u bazi čuvam `password_hash`, nikad lozinku.
+  - DTO kao Java `record` (`HealthResponse`) i `@RestController`/`@GetMapping`; kontroler nema poslovne logike. API ne vraća JPA entitete jer bi procurila interna polja (npr. `password_hash`) i svaka promjena tabele mijenjala bi API.
   - 401 na `/api/health` ne dokazuje da kontroler radi: Spring Security je filter ispred kontrolera i vraća 401 i za putanje koje ne postoje.
-  - `@WebMvcTest` podiže samo web sloj (bez baze), `MockMvc` šalje lažne HTTP zahtjeve, `@WithMockUser` glumi prijavljenog korisnika. Dva testa: prijavljen korisnik dobija 200 i `{"status":"UP"}`, neprijavljen dobija 401.
+  - `@WebMvcTest` podiže samo web sloj (bez baze), za razliku od `@SpringBootTest` koji podiže cijelu aplikaciju. `MockMvc` šalje lažne HTTP zahtjeve, `@WithMockUser` glumi prijavljenog korisnika. Dva testa: prijavljen korisnik dobija 200 i `{"status":"UP"}`, neprijavljen dobija 401.
   - Test s constructor injectionom treba `@Autowired` na konstruktoru, inače JUnit ne zna odakle da uzme `MockMvc`.
-- **Greške koje sam napravio:** mislio sam da 401 znači da endpoint radi. Zapravo samo znači da je aplikacija pokrenuta i da je Security aktivan; da kontroler radi dokazuje tek test. Također: prvi test je pao s `No ParameterResolver registered for parameter [MockMvc]` jer konstruktor nije imao `@Autowired`.
-- **Pitanja za ponavljanje (kao na intervjuu):**
-  1. Zašto u projektu koristiš Flyway i `ddl-auto=validate`, a ne `ddl-auto=update`?
-  2. Šta je razlika između `docker compose down` i `docker compose down -v` i zašto je to bitno za bazu?
-  3. Zašto API ne smije vraćati JPA entitet `User` direktno, nego DTO?
-  4. Koja je razlika između `@WebMvcTest` i `@SpringBootTest`, i zašto si za kontroler birao `@WebMvcTest`?
-  5. Endpoint vraća 401. Šta to dokazuje, a šta ne dokazuje o kontroleru?
-- **Šta mi još nije jasno:** (dopuni svojim riječima)
+  - Git radni tok: mali commitovi s porukama na bosanskom, prije svakog `git status` i `git diff --staged` da provjerim da nema tajni, push na kraju sesije.
+- **Greške koje sam napravio:**
+  - Mislio sam da 401 znači da endpoint radi. Zapravo samo znači da je aplikacija pokrenuta i da je Security aktivan; da kontroler radi dokazuje tek test.
+  - Prvi test je pao s `No ParameterResolver registered for parameter [MockMvc]` jer konstruktor nije imao `@Autowired`.

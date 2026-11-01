@@ -19,7 +19,6 @@ funkcionalnosti, model podataka i redoslijed rada.
 Verzije NE pretpostavljaj: pogledaj `backend/pom.xml` i `frontend/package.json`.
 Ne koristi zastarjele API-je (npr. `WebSecurityConfigurerAdapter`). Ako nisi siguran
 kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokumentaciju.
-(Get-Content CLAUDE.md) -replace '^- Mali, jasni git commitovi uz predloženu poruku\. Commit radim ja\.$', "- Mali, jasni git commitovi. Poruke commitova i komentari u kodu na bosanskom. Commit radim ja." | Set-Content CLAUDE.md -Encoding UTF8
 
 # Komande
 
@@ -60,7 +59,7 @@ kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokum
 - Testovi: bar jedan unit i jedan integracioni test po funkcionalnosti. Objasni šta
   svaki test dokazuje.
 - React: pravila hookova, API pozivi u posebnom sloju, loading/error stanja.
-- Mali, jasni git commitovi uz predloženu poruku. Commit radim ja.
+- Mali, jasni git commitovi. Poruke commitova i komentari u kodu na bosanskom. Commit radim ja.
 
 # Sigurnost (obavezno)
 
@@ -73,8 +72,23 @@ kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokum
 
 # Dnevnik učenja
 
-Na kraju svake sesije dopiši u `LEARNING_LOG.md`: šta sam naučio, koje sam greške
-napravio i 2-3 pitanja za ponavljanje. Pitanja formuliši kao na intervjuu.
+Na kraju svake sesije dopiši u `LEARNING_LOG.md` novi unos u prvom licu (u moje ime)
+s datumom, danom i tačnim vremenom na bosanskom. Unos sadrži samo: šta sam naučio i
+koje sam greške napravio. NE dodaj pitanja za ponavljanje i NE dodaj sekciju "šta mi
+nije jasno". Tačno vrijeme uzmi iz sistema (`Get-Date`), ne pogađaj.
+
+# Dokumentacija (cilj: prezentabilan portfolio)
+
+Projekat na kraju mora izgledati profesionalno i dovoljno kompleksno za portfolio.
+Dokumentaciju održavaj uporedo s kodom, ne na kraju:
+
+- `README.md`: opis problema, tehnologije, mogućnosti sa statusom (urađeno / u izradi),
+  pokretanje lokalno, struktura, linkovi na `docs/`, live demo i screenshotovi kad postoje.
+  Nikad ne tvrdi da nešto radi ako nije napravljeno i provjereno.
+- `docs/ARHITEKTURA.md`: slojevi, tok zahtjeva, model podataka (Mermaid dijagrami).
+- `docs/ODLUKE.md`: ključne tehničke odluke s obrazloženjem (zašto Flyway, DTO, BigDecimal...).
+- Poslije svake funkcionalnosti ažuriraj README (status) i relevantne `docs/` fajlove.
+- Ne izmišljaj live linkove, screenshotove ni rezultate; stavi jasan placeholder.
 
 # Zabrane
 
