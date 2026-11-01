@@ -40,7 +40,7 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
 - **Odluka:** vrijeme je `TIMESTAMPTZ`, novac će biti `NUMERIC(12,2)` u bazi i `BigDecimal` u Javi.
 - **Zašto:** `TIMESTAMPTZ` čuva trenutak nezavisno od vremenske zone servera. `double` ne može
   tačno predstaviti decimalne iznose (npr. 0.1), pa bi podjela troškova gubila ili dobijala
-  cente; `NUMERIC`/`BigDecimal` su tačni.
+  feninge; `NUMERIC`/`BigDecimal` su tačni.
 
 ## 6. Lombok, ali bez `@Data` na entitetima
 
@@ -118,3 +118,19 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   da ne ostane grupa bez vlasnika. Čitanje je `readOnly = true`.
 - **Autorizacija:** id korisnika dolazi isključivo iz tokena, nikad iz tijela ili putanje zahtjeva.
 - **Članovi vide samo ime za prikaz**, ne email drugih članova.
+
+## 13. Novac: računanje u feninzima, bez tihog zaokruživanja
+
+- **Odluka:** iznosi su `BigDecimal` (nikad `double`), a podjela se računa u **feninzima kao cijelim brojevima**
+  (`ExpenseSplitter`). Ostatak cijelog dijeljenja dobijaju prvi učesnici po 1 fening
+  (100.00 na troje = 33.34 + 33.33 + 33.33).
+- **Valuta:** konvertibilna marka (KM), 1 KM = 100 feninga. Najmanja jedinica je fening, pa su
+  iznosi uvijek s najviše 2 decimale.
+- **Zašto:** u cijelim brojevima nema grešaka zaokruživanja, pa je zbir dijelova **uvijek tačno** jednak
+  ukupnom iznosu i nijedan fening se ne gubi ni stvara. `double` ne može tačno predstaviti npr. 0.1.
+- **Ulaz se ne zaokružuje:** iznos s više od 2 decimale se odbija s greškom, umjesto da se tiho promijeni.
+  Najveći iznos odgovara koloni `NUMERIC(12,2)`.
+- **Poznato ograničenje:** ostatak uvijek ide prvima u listi, pa kroz mnogo troškova isti ljudi mogu
+  dobiti feninga više. Za iznose koji su u feninzima to je zanemarivo; ako zatreba, ostatak se može rotirati.
+- **Alternativa:** `BigDecimal.divide` s `RoundingMode`, uz ručno "ispravljanje" zadnjeg dijela. Radi,
+  ali je lakše pogriješiti; računanje u feninzima je jednostavnije za dokazati testom.

@@ -94,3 +94,16 @@ Format unosa:
   - Kod za pridruživanje generišem sa `SecureRandom` iz abecede bez znakova koji se brkaju, a `UNIQUE` u bazi hvata koliziju. Dva istovremena pridruživanja istog korisnika hvata primarni ključ, pa vraćam isti 409.
   - Mockito: `thenAnswer` treba kad mock mora vratiti ono što je dobio kao argument (npr. `save`).
 - **Greške koje sam napravio:** u ovom koraku nijedna. `GroupFlowIntegrationTest` (s pravom bazom) još nisam pokrenuo.
+
+---
+
+## 2026-11-01 (nedjelja, 13:30) - Faza 4 (Troškovi i balansi): tačna podjela novca
+
+- **Naučio sam:**
+  - Novac nikad ne držim u `double` (0.1 + 0.2 nije 0.3). Koristim `BigDecimal`, a za podjelu računam u feninzima kao cijelim brojevima, pa nema zaokruživanja i zbir dijelova je uvijek tačno jednak ukupnom iznosu.
+  - Jednaka podjela: `feninge / broj ljudi` daje osnovni dio, a ostatak (`%`) se razdijeli po 1 fening prvima. 100.00 na troje je 33.34 + 33.33 + 33.33.
+  - Iznos s više od 2 decimale odbijam, a ne zaokružujem tiho, jer bi korisnik platio drugačije nego što je unio. `stripTrailingZeros()` mi treba da 10.0000 ostane ispravan unos.
+  - `BigDecimal.valueOf(feninzi, 2)` pravi iznos s tačno 2 decimale iz feninga, a `movePointRight(2).longValueExact()` ide nazad i baca izuzetak ako broj ne stane.
+  - Zbog `equals` kod `BigDecimal` (2.5 i 2.50 nisu jednaki) u testovima koristim `isEqualByComparingTo` kad poredim vrijednost, a `isEqualTo` samo kad mi je bitna i skala.
+  - Test koji prolazi kroz hiljade kombinacija iznosa i broja ljudi (zbir tačan, razlika među dijelovima najviše 1 fening) dokazuje invarijantu bolje od nekoliko ručnih primjera.
+- **Greške koje sam napravio:** u ovom koraku nijedna.
