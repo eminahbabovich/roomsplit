@@ -28,7 +28,7 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 ## Tehnologije
 
 - **Backend:** Java 21, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA,
-  Bean Validation, PostgreSQL 17, Flyway, JUnit 5, MockMvc
+  Bean Validation, Lombok, PostgreSQL 17, Flyway, JUnit 5, MockMvc
 - **Frontend:** React, Vite
 - **Infrastruktura:** Docker Compose (lokalna baza); deploy _(upisati kad bude postavljeno)_
 

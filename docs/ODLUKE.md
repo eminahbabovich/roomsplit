@@ -42,7 +42,18 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   tačno predstaviti decimalne iznose (npr. 0.1), pa bi podjela troškova gubila ili dobijala
   cente; `NUMERIC`/`BigDecimal` su tačni.
 
-## 6. Testiranje web sloja s `@WebMvcTest`
+## 6. Lombok, ali bez `@Data` na entitetima
+
+- **Odluka:** koristimo Lombok (`@Getter`, `@NoArgsConstructor(access = PROTECTED)`) da ne pišemo
+  ručno getter-e i prazan konstruktor. Na JPA entitetima ne koristimo `@Data`, `@Setter` ni
+  `@EqualsAndHashCode`.
+- **Zašto:** manje šablonskog koda, a entitet ostaje nepromjenjiv kroz konstruktor. `@Data` generiše
+  `equals`/`hashCode`/`toString` nad svim poljima, što kod entiteta pravi probleme (npr. lazy
+  relacije se učitavaju u `toString`, a `hashCode` se mijenja nakon što baza dodijeli `id`).
+- **Alternativa:** ručni getteri (više koda, ali nema dodatne biblioteke) ili `record` za DTO-ove,
+  gdje Lombok uopšte ne treba.
+
+## 7. Testiranje web sloja s `@WebMvcTest`
 
 - **Odluka:** kontrolere testiramo s `@WebMvcTest` + `MockMvc`, a Security ponašanje s `@WithMockUser`.
 - **Zašto:** podiže se samo web sloj (bez baze), pa su testovi brzi. Testiramo i uspješan slučaj
