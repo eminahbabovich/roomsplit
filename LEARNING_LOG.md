@@ -77,3 +77,20 @@ Format unosa:
   - Testovi: istekao token testiram tako da ručno napravim token izdat prije 2 sata (provjera isteka ima toleranciju sata od 60 sekundi); token potpisan tuđim ključem se odbija; `jwt()` post-procesor u `MockMvc` glumi prijavljenog korisnika.
   - `application-test.properties` s izmišljenim ključem i `@ActiveProfiles("test")` omogućavaju da testovi ne ovise o mom `.env` za JWT.
 - **Greške koje sam napravio:** test isteka tokena je prvo pao (`expiresAt must be after issuedAt`), jer encoder ne dozvoljava token koji ističe prije izdavanja. Riješio sam ga ručnim kreiranjem tokena iz prošlosti. Također sam u `.env` prvo upisao tekst komande za generisanje ključa umjesto njenog rezultata. Aplikacija bi tako startovala (niz je dovoljno dug), ali bi ključ bio javno poznat iz `.env.example`, pa bi se mogli falsifikovati tokeni. Pazim da u `.env` ide ispisana vrijednost, a ne komanda. Cijeli skup od 26 testova, uključujući one s pravom bazom, prolazi.
+
+---
+
+## 2026-11-01 (nedjelja, 13:26) - Faza 3 (Grupe): model, servis i API za grupe
+
+- **Naučio sam:**
+  - `@ManyToOne` je veza "mnogo prema jednom" (mnogo grupa, jedan kreator). `optional = false` odgovara `NOT NULL`, a `@JoinColumn` kaže koja je kolona strani ključ; bez nje Hibernate pogađa ime kolone i `validate` pada.
+  - `FetchType.LAZY` učitava povezani objekat tek kad ga pozovem. `EAGER` bi uz svaku grupu odmah povlačio korisnika i pravio višak upita.
+  - Lista od N redova s lazy relacijom pravi 1 + N upita (N+1 problem). Rješavam ga s `join fetch` u JPQL upitu.
+  - Složeni ključ: `@EmbeddedId` + `@Embeddable` klasa koja mora imati `equals`/`hashCode` i biti `Serializable`. `@MapsId` kaže da je kolona istovremeno dio ključa i strani ključ, da je Hibernate ne mapira dvaput.
+  - `@Enumerated(EnumType.STRING)` čuva "OWNER" umjesto rednog broja, pa dodavanje nove uloge usred enuma ne kvari podatke.
+  - Indeks na `user_id` treba jer primarni ključ `(group_id, user_id)` ubrzava samo upite po `group_id`, a "moje grupe" traži po `user_id`.
+  - `@Transactional` stavlja kreiranje grupe i upis vlasnika u jednu transakciju: ili uspije oboje ili ništa. Za čitanje koristim `readOnly = true`.
+  - Autorizacija po grupi: prvo provjera članstva, pa tek onda učitavanje grupe. Ko nije član dobija 404 kao da grupa ne postoji, da se ne otkriju ids grupa. Id korisnika uzimam samo iz tokena.
+  - Kod za pridruživanje generišem sa `SecureRandom` iz abecede bez znakova koji se brkaju, a `UNIQUE` u bazi hvata koliziju. Dva istovremena pridruživanja istog korisnika hvata primarni ključ, pa vraćam isti 409.
+  - Mockito: `thenAnswer` treba kad mock mora vratiti ono što je dobio kao argument (npr. `save`).
+- **Greške koje sam napravio:** u ovom koraku nijedna. `GroupFlowIntegrationTest` (s pravom bazom) još nisam pokrenuo.

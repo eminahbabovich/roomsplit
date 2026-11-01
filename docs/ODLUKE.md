@@ -100,3 +100,21 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   i odbijanje neprijavljenog korisnika (401).
 - **Alternativa:** `@SpringBootTest` podiže cijelu aplikaciju – bliže produkciji, ali sporije;
   koristit ćemo ga za integracione testove s bazom.
+
+## 12. Grupe: složeni ključ, 404 umjesto 403 i kod za pridruživanje
+
+- **Složeni primarni ključ** `(group_id, user_id)` u `group_members`: isti korisnik ne može ući u
+  istu grupu dvaput, a to garantuje baza, ne samo kod. Mapiran je s `@EmbeddedId` i `@MapsId`.
+  Alternativa je surogat `id` kolona uz posebno `UNIQUE(group_id, user_id)`.
+- **Ko nije član, dobija 404, ne 403.** Ista poruka vrijedi kad grupa ne postoji i kad korisnik nije
+  član, pa se ne može saznati koji ids grupa postoje. Provjera članstva ide **prije** učitavanja grupe.
+- **Kod za pridruživanje:** 8 znakova iz abecede bez znakova koji se brkaju (0/O, 1/I/L), generisan s
+  `SecureRandom` (kod je jedina "lozinka" za ulazak u grupu). Prostor je 31^8 (oko 8,5 · 10^11).
+  `UNIQUE` u bazi je zadnja linija odbrane od kolizije. Poznato ograničenje: nema ograničenja broja
+  pogrešnih pokušaja, pa bi se kod teoretski mogao pogađati; kasnije se može dodati rate limit.
+- **Lazy relacije i `join fetch`:** relacije su `LAZY`, a liste se učitavaju upitima s `join fetch`
+  da se izbjegne N+1 problem (1 + N upita za listu od N redova).
+- **`@Transactional`:** kreiranje grupe upisuje grupu i prvog člana (vlasnika) u jednoj transakciji,
+  da ne ostane grupa bez vlasnika. Čitanje je `readOnly = true`.
+- **Autorizacija:** id korisnika dolazi isključivo iz tokena, nikad iz tijela ili putanje zahtjeva.
+- **Članovi vide samo ime za prikaz**, ne email drugih članova.
