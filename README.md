@@ -10,7 +10,7 @@ uplata za poravnanje.
 
 Cimeri i studenti dijele troškove (hrana, struja, putovanja) i stalno se zbune ko kome
 koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa balanse
-(bez grešaka u centima) i predlaže minimalan broj uplata kojim se svi poravnaju.
+(bez grešaka u feninzima) i predlaže minimalan broj uplata kojim se svi poravnaju.
 
 ## Mogućnosti
 

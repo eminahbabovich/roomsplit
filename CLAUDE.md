@@ -52,7 +52,7 @@ kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokum
 - Constructor injection, ne `@Autowired` na poljima.
 - Validacija (`@Valid` + Bean Validation) i globalno rukovanje greškama (`@RestControllerAdvice`).
 - Novac: `BigDecimal` i `NUMERIC` u bazi, nikad `double`. Podjela iznosa mora zbrojiti
-  tačno na originalni iznos (pazi na cente).
+  tačno na originalni iznos (pazi na feninge; valuta je konvertibilna marka, KM, 1 KM = 100 feninga).
 - Šema baze samo kroz Flyway migracije, ne `ddl-auto=update`.
 - REST: ispravni HTTP statusi i nazivi resursa.
 - Svaki endpoint provjerava da korisnik smije pristupiti tom resursu (npr. član grupe).

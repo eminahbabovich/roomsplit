@@ -151,7 +151,7 @@ erDiagram
 ```
 
 **Invarijanta:** za svaki trošak vrijedi `SUM(share_amount) = amount` (podjela mora zbrojiti
-tačno na originalni iznos, bez gubitka centa).
+tačno na originalni iznos, bez gubitka feninga).
 
 ## API (skica)
 
