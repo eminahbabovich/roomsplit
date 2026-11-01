@@ -25,7 +25,21 @@ Format unosa:
   - `@WebMvcTest` podiže samo web sloj (bez baze), za razliku od `@SpringBootTest` koji podiže cijelu aplikaciju. `MockMvc` šalje lažne HTTP zahtjeve, `@WithMockUser` glumi prijavljenog korisnika. Dva testa: prijavljen korisnik dobija 200 i `{"status":"UP"}`, neprijavljen dobija 401.
   - Test s constructor injectionom treba `@Autowired` na konstruktoru, inače JUnit ne zna odakle da uzme `MockMvc`.
   - Cijeli `mvnw test` uključuje i `@SpringBootTest` (`RoomsplitApplicationTests`) koji podiže cijelu aplikaciju s pravom bazom i Flywayom; prolazak dokazuje da datasource, migracije i `ddl-auto=validate` rade zajedno, što `@WebMvcTest` ne može dokazati. Mana: test ovisi o lokalnoj bazi i env varijablama (kasnije Testcontainers).
-  - Git radni tok: mali commitovi s porukama na bosanskom, prije svakog `git status` i `git diff --staged` da provjerim da nema tajni, push na kraju sesije.
+  - Git radni tok: jedan commit je jedna logična cjelina, poruke na bosanskom, prije svakog `git status` i `git diff --staged` da provjerim da nema tajni, a push radim ja na kraju sesije.
 - **Greške koje sam napravio:**
   - Mislio sam da 401 znači da endpoint radi. Zapravo samo znači da je aplikacija pokrenuta i da je Security aktivan; da kontroler radi dokazuje tek test.
   - Prvi test je pao s `No ParameterResolver registered for parameter [MockMvc]` jer konstruktor nije imao `@Autowired`.
+
+---
+
+## 2026-11-01 (nedjelja, 12:56) - Faza 2 (Autentikacija): User entitet i Lombok
+
+- **Naučio sam:**
+  - `@Entity` i `@Table(name = "users")` vežu Java klasu za tabelu. Naziv tabele pišem eksplicitno jer bi Hibernate inače tražio `user`, a to je u Postgresu rezervisana riječ.
+  - `@Id` + `@GeneratedValue(strategy = IDENTITY)` znači da id generiše baza. `@Column(name = "password_hash")` mi treba jer se camelCase u Javi razlikuje od snake_case u bazi.
+  - JPA traži prazan konstruktor jer entitete pravi refleksijom. Držim ga `protected` da ga ostali ne zovu.
+  - Entitet nema setter-e, vrijednosti dobija kroz konstruktor. `createdAt` postavljam u konstruktoru (`Instant.now()`), jer Hibernate pri `INSERT`-u šalje sva polja pa bi `null` pao na `NOT NULL`.
+  - `JpaRepository<User, Long>` daje `save`, `findById` itd. bez koda, a `findByEmail` i `existsByEmail` Spring sam pretvori u SQL iz imena metode (ime mora pratiti polje entiteta).
+  - Lombok ide kao `optional` zavisnost plus `annotationProcessorPaths` u `maven-compiler-plugin`, i isključen je iz finalnog jara. Na entitetima koristim samo `@Getter` i `@NoArgsConstructor`, ne `@Data`, jer `equals`/`hashCode`/`toString` nad svim poljima prave probleme kod JPA entiteta.
+  - Da je Lombok zaista radio provjerio sam sa `javap`, jer kompajler ne bi javio grešku dok god niko ne poziva getter-e.
+- **Greške koje sam napravio:** u ovom koraku nijedna veća. Jedino sam za Lombok morao paziti na konfiguraciju u `pom.xml`, jer bez `annotationProcessorPaths` kod može da se kompajlira, a getteri ne postoje.
