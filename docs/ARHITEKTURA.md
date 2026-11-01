@@ -44,6 +44,17 @@ sequenceDiagram
 Napomena: 401 vraća Security filter prije kontrolera, pa 401 samo po sebi ne dokazuje da je
 kontroler ispravno povezan. Zato endpoint pokriva test (`HealthControllerTest`) s oba slučaja.
 
+## Rukovanje greškama
+
+Sve greške prolaze kroz `GlobalExceptionHandler` (`@RestControllerAdvice`) i vraćaju isti oblik
+`ApiError` (`timestamp`, `status`, `message`, opciono `fieldErrors`). Kontroleri ne hvataju izuzetke sami.
+
+| Situacija | Status |
+|---|---|
+| Neispravan ulaz (`@Valid`) | 400 + `fieldErrors` po polju |
+| Email već postoji | 409 |
+| Nije prijavljen | 401 (`SecurityConfig`) |
+
 ## Model podataka
 
 Implementirana je tabela `users` (migracija `V1__create_users.sql`). Ostale tabele su
@@ -113,7 +124,7 @@ tačno na originalni iznos, bez gubitka centa).
 | Metoda | Putanja | Opis | Status |
 |---|---|---|---|
 | GET | `/api/health` | provjera da servis radi | ✅ |
-| POST | `/api/auth/register` | registracija | ⏳ |
+| POST | `/api/auth/register` | registracija (201, 400 validacija, 409 zauzet email) | ✅ |
 | POST | `/api/auth/login` | prijava, vraća JWT | ⏳ |
 | POST | `/api/groups` | nova grupa | ⏳ |
 | POST | `/api/groups/join` | pridruži se kodom | ⏳ |

@@ -19,7 +19,8 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Docker Compose za lokalni PostgreSQL | ✅ gotovo |
 | Verzionisane migracije baze (Flyway), tabela `users` | ✅ gotovo |
 | Health endpoint `GET /api/health` s integracionim testom | ✅ gotovo |
-| Registracija i prijava (JWT, BCrypt) | ⏳ faza 2: Autentikacija |
+| Registracija (`POST /api/auth/register`, BCrypt, validacija, 409 za zauzet email) | ✅ gotovo |
+| Prijava i JWT | ⏳ faza 2: Autentikacija |
 | Grupe, članstvo i pridruživanje kodom | ⏳ faza 3: Grupe |
 | Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ⏳ faza 4: Troškovi i balansi |
 | Balansi i algoritam poravnanja (minimalan broj uplata) | ⏳ faza 4: Troškovi i balansi |

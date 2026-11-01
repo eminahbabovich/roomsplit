@@ -53,7 +53,29 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
 - **Alternativa:** ručni getteri (više koda, ali nema dodatne biblioteke) ili `record` za DTO-ove,
   gdje Lombok uopšte ne treba.
 
-## 7. Testiranje web sloja s `@WebMvcTest`
+## 7. Registracija: BCrypt, normalizacija emaila, zaštita od duplikata
+
+- **Odluka:** lozinka se hashira s BCrypt-om (`PasswordEncoder`), email se prije upisa
+  `trim()`-uje i pretvara u mala slova, lozinka mora imati 8-72 znaka.
+- **Zašto:** BCrypt je sporo, "soljeno" hashiranje namijenjeno lozinkama, pa i ako baza procuri
+  lozinke se ne mogu lako povratiti. Gornja granica 72 je zato što BCrypt gleda samo prvih 72 bajta.
+  Normalizacija sprječava dva naloga za `Ana@x.com` i `ana@x.com`.
+- **Dupli email:** servis prvo provjeri `existsByEmail` (jasna poruka), ali dva istovremena zahtjeva
+  mogu oba proći tu provjeru. Zato `UNIQUE` u bazi ostaje zadnja linija odbrane, a servis hvata
+  `DataIntegrityViolationException` i vraća isti 409.
+- **Alternativa:** hashiranje s Argon2 (noviji, ali traži dodatnu biblioteku), ili samo oslanjanje
+  na bazu bez `existsByEmail` (nema lijepe poruke, hvatanje greške je tada jedini put).
+
+## 8. Validacija i jedinstven oblik greške
+
+- **Odluka:** ulaz validira Bean Validation na DTO-ovima (`@Valid`), a `GlobalExceptionHandler`
+  sve greške pretvara u `ApiError`.
+- **Zašto:** klijent (React) uvijek dobija isti oblik greške i može pokazati poruku uz tačno polje.
+  Kontroleri ostaju čisti, bez `try/catch`.
+- **Alternativa:** `ProblemDetail` (RFC 9457, ugrađen u Spring), standardizovan format; razmotrit ćemo
+  ga ako ApiError postane preuzak.
+
+## 9. Testiranje web sloja s `@WebMvcTest`
 
 - **Odluka:** kontrolere testiramo s `@WebMvcTest` + `MockMvc`, a Security ponašanje s `@WithMockUser`.
 - **Zašto:** podiže se samo web sloj (bez baze), pa su testovi brzi. Testiramo i uspješan slučaj

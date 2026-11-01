@@ -43,3 +43,20 @@ Format unosa:
   - Lombok ide kao `optional` zavisnost plus `annotationProcessorPaths` u `maven-compiler-plugin`, i isključen je iz finalnog jara. Na entitetima koristim samo `@Getter` i `@NoArgsConstructor`, ne `@Data`, jer `equals`/`hashCode`/`toString` nad svim poljima prave probleme kod JPA entiteta.
   - Da je Lombok zaista radio provjerio sam sa `javap`, jer kompajler ne bi javio grešku dok god niko ne poziva getter-e.
 - **Greške koje sam napravio:** u ovom koraku nijedna veća. Jedino sam za Lombok morao paziti na konfiguraciju u `pom.xml`, jer bez `annotationProcessorPaths` kod može da se kompajlira, a getteri ne postoje.
+
+---
+
+## 2026-11-01 (nedjelja, 13:01) - Faza 2 (Autentikacija): registracija korisnika
+
+- **Naučio sam:**
+  - Tok registracije: `AuthController` (prima zahtjev) → `AuthService` (posao) → `UserRepository` (upis). Kontroler nema logike, vraća `UserResponse` bez `password_hash`.
+  - `RegisterRequest` je `record` s Bean Validation anotacijama (`@NotBlank`, `@Email`, `@Size`), a `@Valid` na parametru kontrolera ih uključuje. Bez `@Valid` anotacije bi se ignorisale. Lozinka ima gornju granicu 72 jer BCrypt gleda samo prvih 72 bajta.
+  - Lozinku hashiram s `BCryptPasswordEncoder` (bean `PasswordEncoder`). Hash je "soljen" i spor namjerno, pa se lozinka ne može lako povratiti ni ako baza procuri.
+  - Email normalizujem (`trim` + mala slova), da `Ana@x.com` i `ana@x.com` ne budu dva naloga.
+  - Duplikat emaila: `existsByEmail` daje lijepu poruku, ali dva istovremena zahtjeva mogu oba proći tu provjeru. Zato je `UNIQUE` u bazi zadnja linija odbrane, a servis hvata `DataIntegrityViolationException` i vraća isti 409.
+  - `@Transactional` na servisu znači da je cijela metoda jedna transakcija; ako nešto pukne, ništa se ne upisuje.
+  - `@RestControllerAdvice` (`GlobalExceptionHandler`) na jednom mjestu pretvara izuzetke u `ApiError`: 400 s `fieldErrors` po polju, 409 za zauzet email.
+  - `SecurityConfig`: stateless sesije, CSRF isključen (nema cookie-ja), `/api/auth/**` je javan, ostalo traži prijavu. Bez `authenticationEntryPoint` neprijavljen korisnik dobija 403 umjesto 401.
+  - Tri vrste testova za istu funkcionalnost: unit (Mockito, bez Springa) za servis, `@WebMvcTest` + `@MockitoBean` za HTTP sloj, i `@SpringBootTest` s pravom bazom koji se vraća u prvobitno stanje (`@Transactional`).
+  - Lombok `@RequiredArgsConstructor` pravi konstruktor za `final` polja, pa dobijam constructor injection bez ručnog koda.
+- **Greške koje sam napravio:** nije bilo grešaka u ovom koraku. Integracioni test s bazom još nisam pokrenuo (traži učitan `.env`).
