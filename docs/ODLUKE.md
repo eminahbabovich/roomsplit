@@ -174,7 +174,7 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
 
 ## 16. Frontend: običan CSS, vlastiti dizajn i tanak API sloj
 
-- **Bez UI biblioteke.** Sav izgled je običan CSS s varijablama (`index.css`: boje, fontovi, dugmad, forme).
+- **Bez UI biblioteke.** Sav izgled je običan CSS s varijablama (`index.css`: boje, fontovi, sjene, dugmad, forme). Izgled je moderan i prozračan: tanke ivice, meke slojevite sjene, naslovi u Figtree sans fontu s Fraunces serifom samo kao akcentom. Prva verzija je imala debele ivice i tvrde sjene; sve ivice i sjene su sad tokeni (`--bc`, `--shadow-card`...), pa se izgled mijenja na jednom mjestu.
   Zašto: kod se može objasniti liniju po liniju, a izgled nije "još jedan Tailwind/Material projekat".
   Cijena: više posla i ručna briga o pristupačnosti.
 - **Fontovi preko `@fontsource`** (Fraunces, Figtree, DM Mono): rade lokalno, bez poziva prema Google Fonts.

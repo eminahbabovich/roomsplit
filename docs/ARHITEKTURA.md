@@ -244,4 +244,4 @@ pa forme mogu pokazati poruku ispod tačno onog polja koje je backend odbio. Odg
 Rute: `/` (početna), `/prijava`, `/registracija`, a iza prijave `/grupe` i `/grupe/:id`
 (tab u adresi: `?tab=balansi` ili `?tab=clanovi`).
 
-U razvoju Vite proxy (`vite.config.js`) prosljeđuje `/api` na `localhost:8080`.
+U razvoju Vite proxy (`vite.config.js`) prosljeđuje `/api` na `localhost:8080` (cilj se može promijeniti varijablom `API_TARGET`).

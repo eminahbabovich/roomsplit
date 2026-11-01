@@ -176,3 +176,15 @@ Format unosa:
   - `localStorage` je zajednički za sve tabove istog sajta, pa prijava drugog korisnika u drugom tabu prepiše token prvog. Poslije osvježavanja svi tabovi postanu zadnji prijavljeni korisnik. `sessionStorage` je odvojen po tabu i opet preživi osvježavanje, pa sam prešao na njega. Cijena je da novi tab traži novu prijavu.
   - Pravi backend je prošao sve scenarije koje sam prije vidio samo na lažnom API-ju: jednaka podjela, ostatak od feninga, tačni iznosi, balansi, najmanji broj uplata, uplata do pečata KVIT.
 - **Greške koje sam napravio:** token sam u prvoj verziji čuvao u `localStorage`, pa testiranje s tri korisnika u istom browseru nije radilo kako treba. Tu grešku sam našao tek kad sam probao s više korisnika odjednom, a ne dok sam pisao kod.
+
+---
+
+## 2026-11-01 (nedjelja, 15:22) - Moderniji dizajn na zasebnoj grani
+
+- **Naučio sam:**
+  - Redizajn radim na posebnoj grani (`moderni-dizajn`), pa mogu uporediti staru i novu verziju i vratiti staru. Tako se mijenja izgled bez rizika po `main`.
+  - Što su ivice, sjene i boje tokeni (CSS varijable), to je promjena izgleda lakša: mijenjam definiciju na jednom mjestu. Debele ivice i tvrde sjene sam preko `sed` zamjene pretvorio u `--bc` i `--shadow-card`.
+  - Meka sjena preko `filter: drop-shadow` se \"odsiječe\" ako element ima `clip-path`. Zato je animacija štampanja računa morala dobiti veći izlaz (`inset(-10px -40px -70px -40px)`).
+  - Bento mreža (CSS grid sa 6 kolona i `grid-column: span N`) mora imati broj kartica koji popunjava redove, inače jedna kartica ostane sama (4+2, 2+4, 3+3).
+  - `vite.config.js` radi u Nodeu, pa mu treba `import process from 'node:process'`, jer ESLint u ovom projektu poznaje samo browser globale.
+- **Greške koje sam napravio:** u prvoj verziji nove mreže šesta kartica je ostala sama u redu. Pečat \"do feninga\" je poslije promjene fonta pao preko reda s iznosom, jer je račun postao niži. Obje stvari sam našao tek na screenshotu.
