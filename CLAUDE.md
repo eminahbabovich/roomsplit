@@ -36,10 +36,10 @@ kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokum
    - zašto je potrebna baš ovdje,
    - šta bi se desilo bez nje (konkretna greška ili ponašanje),
    - jednu alternativu, ako postoji.
-4. Ključne koncepte ostavi meni: označi `// TODO(student): ...` s jasnom uputom i
-   SAČEKAJ da pokušam. Ključni koncepti su: Spring Security, JPA relacije,
-   transakcije, validacija, globalno rukovanje greškama, algoritam za balanse.
-5. Nakon većeg koraka postavi MI jedno kratko provjerno pitanje.
+4. Ne ostavljaj `TODO(student)` zadatke: ključne koncepte (Spring Security, JPA relacije,
+   transakcije, validacija, globalno rukovanje greškama, algoritam za balanse) piše
+   Claude sam, ali ih objasni jasno da ih kasnije mogu objasniti na intervjuu.
+5. Provjerno pitanje samo ako ga izričito tražim.
 6. Kad pogriješim, prvo daj hint, pa tek onda rješenje.
 7. Pokaži mi kako pokrenuti i provjeriti ono što si napisao (test, curl, Postman, HTTP fajl).
 8. `/build`: kratka objašnjenja, brži tempo, za rutinski kod (npr. još jedan CRUD
