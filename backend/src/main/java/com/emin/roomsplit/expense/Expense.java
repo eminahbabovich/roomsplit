@@ -84,6 +84,16 @@ public class Expense {
         this.createdAt = Instant.now();
     }
 
+    // Group i createdBy se nikad ne mijenjaju: trošak ostaje u istoj grupi i kod istog autora
+    public void update(User paidBy, String description, BigDecimal amount, ExpenseCategory category,
+            LocalDate expenseDate) {
+        this.paidBy = paidBy;
+        this.description = description;
+        this.amount = amount;
+        this.category = category;
+        this.expenseDate = expenseDate;
+    }
+
     public List<ExpenseShare> getShares() {
         return Collections.unmodifiableList(shares);
     }
