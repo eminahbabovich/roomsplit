@@ -123,3 +123,18 @@ Format unosa:
   - 403 za člana grupe koji mijenja tuđi trošak, 404 za stranca: član trošak ionako vidi, pa 404 ne bi imao smisla.
   - `HttpMessageNotReadableException` i `MethodArgumentTypeMismatchException` hvatam u `GlobalExceptionHandler`, da loš JSON, nepoznat enum ili loš datum daju 400 s porukom.
 - **Greške koje sam napravio:** integracioni test izmjene troška je pao s `duplicate key ... expense_shares_expense_id_user_id_key`. Razlog nije bio u servisu nego u testu: `@Transactional` test stavlja sve zahtjeve u jedan persistence context, pa Hibernate nije obrisao stare dijelove prije upisa novih. U stvarnosti je svaki zahtjev zasebna transakcija. Test sada između zahtjeva radi `flush` i `clear`, što to oponaša (svih 8 testova prolazi). Pouka: integracioni test mora vjerno oponašati granice transakcija.
+
+---
+
+## 2026-11-01 (nedjelja, 13:54) - Faza 4 (Troškovi i balansi): balansi, poravnanje i uplate
+
+- **Naučio sam:**
+  - Balans ne čuvam u bazi nego ga računam: `platio - njegov dio + isplatio - primio`. Tako se ne može razići s troškovima kad se neki izmijeni ili obriše. Zbir balansa u grupi je uvijek 0.
+  - Umjesto učitavanja svih troškova koristim `SUM ... GROUP BY` upite koji vraćaju jedan red po članu. U JPQL-u za to služi constructor expression (`select new ...UserTotal(...)`).
+  - Greedy poravnanje (najveći dužnik plaća najvećem povjeriocu) nije uvijek najbolje. Postoje slučajevi gdje daje 4 uplate a dovoljno su 3. Tačno rješenje: nađem najviše podskupova čiji je zbir balansa 0, pa je broj uplata `n - broj podskupova`. To radim DP-om nad bitmaskama, što je 2^n, pa vrijedi do 20 članova, a iznad toga pada na greedy.
+  - Algoritam provjeravam poređenjem s nezavisnim algoritmom na 400 nasumičnih primjera, i posebnim testom gdje greedy griješi.
+  - `GroupAccess` je jedno mjesto za provjeru članstva, pa ne kopiram istu provjeru u svaki servis. Nečlan dobija 404, isto kao da grupa ne postoji.
+  - Uplatu uvijek bilježi prijavljeni korisnik (platilac nije u zahtjevu). Da može upisati uplatu u tuđe ime, mogao bi nekome "izbrisati" dug.
+  - `@WebMvcTest` može testirati dva kontrolera odjednom: `@WebMvcTest({A.class, B.class})`.
+  - U integracionom testu opet koristim `flush` + `clear` između zahtjeva, da svaki zahtjev bude kao zasebna transakcija.
+- **Greške koje sam napravio:** u ovom koraku nijedna. Integracioni test `BalanceFlowIntegrationTest` (s pravom bazom) još nisam pokrenuo, pa balanse i uplate ne smijem označiti kao gotove dok ne prođe.

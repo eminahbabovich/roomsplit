@@ -172,9 +172,9 @@ tačno na originalni iznos, bez gubitka feninga).
 | GET | `/api/groups/{id}/expenses?page=&size=&from=&to=&category=` | lista, paginirano i filtrirano | ✅ |
 | GET | `/api/groups/{id}/expenses/{eid}` | jedan trošak | ✅ |
 | PUT/DELETE | `/api/groups/{id}/expenses/{eid}` | izmjena (200) / brisanje (204), samo autor, ostali članovi 403 | ✅ |
-| GET | `/api/groups/{id}/balances` | balansi | ⏳ |
-| GET | `/api/groups/{id}/settle-suggestions` | predložena poravnanja | ⏳ |
-| POST | `/api/groups/{id}/settlements` | zabilježi uplatu | ⏳ |
+| GET | `/api/groups/{id}/balances` | balans svakog člana (404 nisi član) | ⏳ čeka test s bazom |
+| GET | `/api/groups/{id}/settle-suggestions` | predložene uplate, najmanji mogući broj | ⏳ čeka test s bazom |
+| POST | `/api/groups/{id}/settlements` | zabilježi uplatu (201; 400 sam sebi ili nečlanu; 404 nisi član) | ⏳ čeka test s bazom |
 
 Svaki endpoint grupe provjerava da je prijavljeni korisnik član te grupe.
 
@@ -199,3 +199,26 @@ Svaki endpoint grupe provjerava da je prijavljeni korisnik član te grupe.
 - `category` je neobavezna (podrazumijevano `OTHER`): `FOOD`, `UTILITIES`, `RENT`, `TRANSPORT`, `ENTERTAINMENT`, `OTHER`.
 - Platilac (`paidBy`) i svi učesnici moraju biti članovi grupe. Autor unosa je korisnik iz tokena.
 - Lista vraća `{ items, page, size, totalItems, totalPages }`, sortirano po datumu (najnoviji prvi); `size` je najviše 100.
+
+## Balansi i poravnanje
+
+`GET /balances` i `GET /settle-suggestions` ne učitavaju troškove u memoriju. `BalanceService` šalje
+četiri zbirna upita (`SUM ... GROUP BY user`): koliko je ko platio, koliko mu je dodijeljeno, koliko je
+isplatio i koliko primio kroz uplate. `BalanceCalculator` iz toga računa:
+
+```
+balans = platio - njegov dio + isplatio - primio
+```
+
+Pozitivan balans znači da drugi duguju njemu, negativan da on duguje. Zbir balansa u grupi je uvijek 0.
+
+Prijedlog uplata radi `SettlementPlanner` nad balansima u feninzima:
+
+1. Članovi s balansom 0 se izbace.
+2. Ako ih je najviše 20, traži se **najveći broj podskupova čiji je zbir 0** (DP nad bitmaskama). Svaki takav
+   podskup se može poravnati unutar sebe s (veličina - 1) uplata, pa je ukupan broj uplata
+   `n - broj podskupova`, što je najmanje moguće.
+3. Ako ih je više od 20, koristi se greedy (najveći dužnik plaća najvećem povjeriocu). Radi, ali ne mora
+   dati najmanji broj uplata.
+
+Uplata (`POST /settlements`) uvijek ide od prijavljenog korisnika. Ne može se zabilježiti uplata u tuđe ime.

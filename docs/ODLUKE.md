@@ -154,3 +154,20 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   parametara čiji tip PostgreSQL ne može odrediti.
 - **Vlastiti `PageResponse`:** oblik JSON-a stranice određujemo mi, ne Spring Data. `size` je ograničen na 100.
 - **Dio od 0.00 se ne upisuje** (npr. 0.01 KM na troje), jer je u bazi `share_amount > 0`.
+
+## 15. Balansi: zbirni upiti i tačan algoritam poravnanja
+
+- **Balans se ne čuva, računa se.** Nema kolone `balance` koja bi se mogla razići s troškovima. Svaki put se računa
+  iz troškova, dijelova i uplata, pa je uvijek tačan i kad se trošak izmijeni ili obriše.
+- **Zbirni upiti umjesto učitavanja redova:** `SUM + GROUP BY` u bazi vraća jedan red po članu. Grupa s hiljadu
+  troškova ne znači hiljadu objekata u memoriji.
+- **Minimalan broj uplata je tačan, ne približan.** Greedy često daje isti rezultat, ali ne uvijek: postoje slučajevi
+  gdje daje 4 uplate a optimum je 3 (pokriveno testom). Zato `SettlementPlanner` koristi DP nad podskupovima.
+  Test poredi rezultat s nezavisnim algoritmom na 400 nasumičnih primjera.
+- **Poznato ograničenje:** DP je eksponencijalan (2^n), pa je tačan samo do 20 članova s nenultim balansom. Za veće
+  grupe pada na greedy. Za stan ili društvo prijatelja to je više nego dovoljno.
+- **Uplata uvijek od prijavljenog korisnika.** Da može upisati uplatu u tuđe ime, mogao bi nekome "izbrisati" dug.
+- **Poznato ograničenje:** uplata može biti veća od duga (tada primalac postaje dužnik) i zasad nema liste ni
+  brisanja uplata.
+- **Alternativa:** čuvati balanse u zasebnoj tabeli i ažurirati ih pri svakoj promjeni. Brže čitanje, ali lako
+  dobije pogrešnu vrijednost ako se jedna promjena zaboravi.

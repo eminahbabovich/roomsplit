@@ -22,8 +22,8 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Registracija (`POST /api/auth/register`, BCrypt, validacija, 409 za zauzet email) | ✅ gotovo |
 | Prijava (`POST /api/auth/login`), JWT (HS256, istek 60 min), zaštićen `GET /api/users/me`, CORS | ✅ gotovo |
 | Grupe, članstvo i pridruživanje kodom | ✅ gotovo |
-| Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ⏳ faza 4: Troškovi i balansi |
-| Balansi i algoritam poravnanja (minimalan broj uplata) | ⏳ faza 4: Troškovi i balansi |
+| Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ✅ gotovo |
+| Balansi, prijedlog poravnanja (minimalan broj uplata) i bilježenje uplata | ⏳ kod i unit testovi gotovi, čeka integracioni test s bazom |
 | React UI i prvi deploy | ⏳ faza 5: Frontend i deploy |
 
 ## Tehnologije
