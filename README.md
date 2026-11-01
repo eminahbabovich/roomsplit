@@ -4,7 +4,7 @@ Aplikacija za dijeljenje zajedničkih troškova među cimerima i prijateljima.
 Vodi troškove u grupi, računa ko kome koliko duguje i predlaže najmanji broj
 uplata za poravnanje.
 
-> **Status:** u izradi (faze 1, 2, 3 i 4 od 5 gotove, sljedeća: Frontend i deploy). **Live demo:** _uskoro_
+> **Status:** u izradi (faze 1, 2, 3 i 4 od 6 gotove, sljedeća: Frontend (lokalno)). **Live demo:** _uskoro_
 
 ## Problem
 
@@ -24,7 +24,8 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Grupe, članstvo i pridruživanje kodom | ✅ gotovo |
 | Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ✅ gotovo |
 | Balansi, prijedlog poravnanja (minimalan broj uplata) i bilježenje uplata | ✅ gotovo |
-| React UI i prvi deploy | ⏳ faza 5: Frontend i deploy |
+| React UI koji radi lokalno | ⏳ faza 5: Frontend (lokalno) |
+| Izmjene UI-ja i prvi deploy | ⏳ faza 6: Izmjene i deploy |
 
 ## Tehnologije
 
