@@ -171,3 +171,23 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   brisanja uplata.
 - **Alternativa:** čuvati balanse u zasebnoj tabeli i ažurirati ih pri svakoj promjeni. Brže čitanje, ali lako
   dobije pogrešnu vrijednost ako se jedna promjena zaboravi.
+
+## 16. Frontend: običan CSS, vlastiti dizajn i tanak API sloj
+
+- **Bez UI biblioteke.** Sav izgled je običan CSS s varijablama (`index.css`: boje, fontovi, dugmad, forme).
+  Zašto: kod se može objasniti liniju po liniju, a izgled nije "još jedan Tailwind/Material projekat".
+  Cijena: više posla i ručna briga o pristupačnosti.
+- **Fontovi preko `@fontsource`** (Fraunces, Figtree, DM Mono): rade lokalno, bez poziva prema Google Fonts.
+- **Novac se na klijentu formatira ručno** (`1.234,50 KM`), a ne preko `Intl`. Prva verzija je koristila `Intl`
+  s bosanskim locale-om, a u jednom browseru je pao na engleski format (33.34 umjesto 33,34). Izgled iznosa ne
+  smije zavisiti od podataka u browseru. Isto važi za nazive mjeseci.
+- **Podjela troška se uživo prikazuje u formi** istim algoritmom kao backend (`splitEqual`, u feninzima). To je samo
+  pregled; konačan račun uvijek radi server.
+- **JWT u `localStorage`.** Jednostavno i preživi osvježavanje stranice. Cijena: ako neko ubaci skriptu (XSS),
+  može pročitati token. Alternativa je httpOnly cookie, ali traži CSRF zaštitu i promjene na backendu. Za ovaj projekat
+  biram jednostavnost, uz kratak istek tokena (60 min).
+- **`useAsync` umjesto biblioteke za podatke** (npr. TanStack Query): jedan mali hook pokriva loading, grešku i
+  ponovno učitavanje. Nema keširanja između stranica, što ovdje ne smeta.
+- **Nativni `<dialog>` za modale:** browser sam daje focus trap i Esc.
+- **Uplatu uvijek bilježi platilac.** UI nudi dugme "Platio/la sam" samo na uplatama koje je tebi predložio algoritam,
+  jer backend ne dozvoljava upis uplate u tuđe ime.

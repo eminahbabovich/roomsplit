@@ -222,3 +222,26 @@ Prijedlog uplata radi `SettlementPlanner` nad balansima u feninzima:
    dati najmanji broj uplata.
 
 Uplata (`POST /settlements`) uvijek ide od prijavljenog korisnika. Ne može se zabilježiti uplata u tuđe ime.
+
+## Frontend
+
+React 19 + Vite, bez UI biblioteke. Kod je po odgovornostima:
+
+```
+frontend/src/
+  api/         client.js (fetch + token + ApiError), endpoints.js (po jedna funkcija za endpoint)
+  auth/        AuthProvider (ko je prijavljen), useAuth, RequireAuth (zaštićene rute)
+  hooks/       useAsync (loading / error / reload)
+  lib/         money.js (feninzi, podjela), dates.js, categories.js
+  components/  Button, Field, Modal, Avatar, Feedback (loader, greška, prazno stanje), Layout...
+  pages/       Landing, AuthPages, GroupsPage, GroupPage i group/ (tabovi troškovi, balansi, članovi)
+```
+
+Tok jednog poziva: komponenta → funkcija iz `endpoints.js` → `api()` u `client.js` (dodaje
+`Authorization: Bearer`, parsira JSON) → backend. Greška se pretvara u `ApiError` s `status` i `fieldErrors`,
+pa forme mogu pokazati poruku ispod tačno onog polja koje je backend odbio. Odgovor `401` odjavljuje korisnika.
+
+Rute: `/` (početna), `/prijava`, `/registracija`, a iza prijave `/grupe` i `/grupe/:id`
+(tab u adresi: `?tab=balansi` ili `?tab=clanovi`).
+
+U razvoju Vite proxy (`vite.config.js`) prosljeđuje `/api` na `localhost:8080`.

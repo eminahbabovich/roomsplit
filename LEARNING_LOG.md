@@ -147,3 +147,23 @@ Format unosa:
   - Svih 147 testova prolazi s pravom bazom, uključujući integracioni test balansa i uplata. Tek tada faza 4 ide na gotovo.
   - `.env` je u korijenu projekta, a ne u `backend/`. Varijable učitavam iz korijena, pa tek onda idem u `backend` i pokrećem `.\mvnw.cmd test`.
 - **Greške koje sam napravio:** komande za učitavanje `.env` pokrenuo sam iz foldera `backend`, pa su `cd backend` i `Get-Content .env` pali s "Cannot find path". Test je krenuo bez varijabli okruženja. Pouka: prije učitavanja provjerim u kojem sam folderu.
+
+---
+
+## 2026-11-01 (nedjelja, 14:25) - Faza 5: React frontend
+
+- **Naučio sam:**
+  - Frontend ima jedan sloj za pozive prema API-ju (`api/client.js`). Komponente ne zovu `fetch` same, pa token i greške rješavam na jednom mjestu. Greška se pretvara u `ApiError` s `fieldErrors`, i forma pokaže poruku ispod tačno onog polja koje je backend odbio.
+  - `AuthProvider` čuva ko je prijavljen, a `RequireAuth` šalje neprijavljenog na login i vraća ga poslije prijave tamo gdje je bio. Odgovor 401 odjavljuje korisnika.
+  - Vite proxy prosljeđuje `/api` na Spring (port 8080), pa u razvoju nema CORS problema.
+  - Hook `useAsync` pamti rezultat uz ključ zahtjeva. Dok se novi podaci učitavaju, stari ostaju na ekranu, pa lista ne trepće pri promjeni stranice. Ovako je i lint-čist (nema `setState` direktno u effectu).
+  - Nativni `<dialog>` daje focus trap i Esc besplatno. Sadržaj modala se montira tek kad je otvoren, pa se forma svaki put resetuje.
+  - Ista podjela novca u feninzima kao na backendu, da pregled u formi tačno odgovara onom što server izračuna.
+  - ESLint pravilo `react-refresh/only-export-components`: fajl s komponentom smije izvoziti samo komponente, pa podatke (kategorije) držim u `lib/`.
+  - CSS: `@starting-style` za animaciju otvaranja modala, `clip-path` za "štampanje" računa, `:has(:focus-visible)` za fokus na skrivenim radio inputima, `color-mix` za prozirne boje.
+- **Greške koje sam napravio:**
+  - Novac sam formatirao preko `Intl.NumberFormat('bs-BA')`. U jednom browseru je pao na engleski format i pokazao "33.34" umjesto "33,34". Sad formatiram ručno, jer izgled iznosa ne smije zavisiti od podataka u browseru. Isto i za datume.
+  - U tekst sam slučajno ubacio ćirilično slovo "е" u riječ "duguješ". Uhvatio sam ga pretragom po Unicode opsegu. Pouka: provjeriti tekst pretragom, jer se golim okom ne vidi.
+  - Fiksirao sam `opsz` osu fonta na veliku vrijednost za sve naslove, pa su riječi u malim naslovima izgledale zbijeno. Sad font sam bira optičku veličinu.
+  - Pečat na računu u hero sekciji prekrivao je iznos, a drugi račun je bio gotovo skriven iza prvog. Našao sam to tek na screenshotu, ne u kodu.
+  - Cijeli UI sam provjerio samo s lažnim API-jem i izmišljenim podacima. S pravim backendom ga tek treba proći.

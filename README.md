@@ -24,14 +24,14 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Grupe, članstvo i pridruživanje kodom | ✅ gotovo |
 | Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ✅ gotovo |
 | Balansi, prijedlog poravnanja (minimalan broj uplata) i bilježenje uplata | ✅ gotovo |
-| React UI koji radi lokalno | ⏳ faza 5: Frontend (lokalno) |
+| React UI: početna, prijava, grupe, troškovi, balansi, uplate | ⏳ napisano, čeka provjeru s pravim backendom |
 | Izmjene UI-ja i prvi deploy | ⏳ faza 6: Izmjene i deploy |
 
 ## Tehnologije
 
 - **Backend:** Java 21, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA,
   Bean Validation, Lombok, PostgreSQL 17, Flyway, JUnit 5, MockMvc
-- **Frontend:** React, Vite
+- **Frontend:** React 19, Vite, React Router, običan CSS (bez UI biblioteke), fontovi Fraunces, Figtree i DM Mono (lokalno, preko `@fontsource`)
 - **Infrastruktura:** Docker Compose (lokalna baza); deploy _(upisati kad bude postavljeno)_
 
 ## Arhitektura
@@ -46,7 +46,7 @@ i [docs/ODLUKE.md](docs/ODLUKE.md) (ključne tehničke odluke s obrazloženjem).
 
 ## Pokretanje lokalno
 
-Potrebno: Java 21, Docker Desktop. (Node.js treba tek kad frontend dobije sadržaj.)
+Potrebno: Java 21, Docker Desktop, Node.js.
 
 1. **Podesi varijable okruženja.** Kopiraj `.env.example` u `.env` i upiši svoje vrijednosti
    (`.env` je u `.gitignore` i nikad ne ide na GitHub):
@@ -71,6 +71,13 @@ Potrebno: Java 21, Docker Desktop. (Node.js treba tek kad frontend dobije sadrž
    cd backend
    .\mvnw.cmd test
    ```
+5. **Frontend** (u drugom terminalu, backend mora raditi na portu 8080):
+   ```powershell
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   Otvori http://localhost:5173. Vite proxy šalje sve pozive na `/api` backendu, pa CORS ne smeta.
 
 Na Linuxu/macOS-u koristi `./mvnw` umjesto `.\mvnw.cmd`.
 

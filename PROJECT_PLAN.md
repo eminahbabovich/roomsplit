@@ -66,7 +66,7 @@ Invarijanta: za svaki trošak `SUM(share_amount) = amount`.
 | 2 | Autentikacija | Korisnici + Spring Security + JWT | Filter chain, `PasswordEncoder`, stateless auth, CORS | ✅ gotovo |
 | 3 | Grupe | Grupe i članstvo, autorizacija po grupi | JPA relacije, `@Transactional`, validacija, `@RestControllerAdvice` | ✅ gotovo |
 | 4 | Troškovi i balansi | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija | ✅ gotovo |
-| 5 | Frontend (lokalno) | React UI koji radi lokalno sa cijelim backendom: prijava, grupe, troškovi, balansi, uplate | Pravila hookova, API sloj, JWT u klijentu, zaštićene rute, loading/error stanja | |
+| 5 | Frontend (lokalno) | React UI koji radi lokalno sa cijelim backendom: prijava, grupe, troškovi, balansi, uplate | Pravila hookova, API sloj, JWT u klijentu, zaštićene rute, loading/error stanja | ⏳ napisano, čeka provjeru s pravim backendom |
 | 6 | Izmjene i deploy | Ispravke i dorade UI-ja poslije pregleda + **prvi deploy** (Render/Railway + Vercel/Netlify, Neon/Supabase) | CORS u produkciji, env varijable, Dockerfile, DNS | |
 
 Pravilo: prvi deploy se radi u fazi 6, ne na kraju cijelog portfolija. Prvi deploy uvijek
