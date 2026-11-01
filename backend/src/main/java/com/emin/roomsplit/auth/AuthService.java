@@ -19,11 +19,31 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
+
+    public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(normalizeEmail(request.email()))
+                .orElseThrow(InvalidCredentialsException::new);
+
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new InvalidCredentialsException();
+        }
+
+        return new AuthResponse(
+                tokenService.generateToken(user),
+                "Bearer",
+                tokenService.getValidity().toSeconds(),
+                UserResponse.from(user));
+    }
+
+    // Isti email ne smije postojati u dva oblika (Ana@x.com i ana@x.com)
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
-        // Isti email ne smije postojati u dva oblika (Ana@x.com i ana@x.com)
-        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        String email = normalizeEmail(request.email());
 
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(email);
