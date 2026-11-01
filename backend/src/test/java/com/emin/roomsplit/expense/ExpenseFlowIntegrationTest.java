@@ -30,6 +30,8 @@ import com.emin.roomsplit.user.User;
 import com.emin.roomsplit.user.UserRepository;
 import com.jayway.jsonpath.JsonPath;
 
+import jakarta.persistence.EntityManager;
+
 // Cijeli tok s pravom bazom: pravi servis, upiti i ograničenja. Prijavu glumimo jwt() post-procesorom.
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,6 +43,7 @@ class ExpenseFlowIntegrationTest {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final EntityManager entityManager;
 
     private User ana;
     private User emir;
@@ -50,11 +53,12 @@ class ExpenseFlowIntegrationTest {
 
     @Autowired
     ExpenseFlowIntegrationTest(MockMvc mockMvc, UserRepository userRepository, GroupRepository groupRepository,
-            GroupMemberRepository groupMemberRepository) {
+            GroupMemberRepository groupMemberRepository, EntityManager entityManager) {
         this.mockMvc = mockMvc;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
+        this.entityManager = entityManager;
     }
 
     @BeforeEach
@@ -88,11 +92,19 @@ class ExpenseFlowIntegrationTest {
                 """.formatted(opis, iznos, ana.getId(), kategorija, datum, ana.getId(), emir.getId(), sara.getId());
     }
 
+    // Test je jedna transakcija, a u stvarnosti je svaki HTTP zahtjev zasebna transakcija koja trošak
+    // učitava svjež iz baze. flush + clear to oponaša: sljedeći zahtjev ne vidi objekte iz prethodnog.
+    private void noviZahtjev() {
+        entityManager.flush();
+        entityManager.clear();
+    }
+
     private Integer dodaj(User autor, String json) throws Exception {
         String odgovor = mockMvc.perform(post(url()).with(kao(autor))
                         .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
+        noviZahtjev();
         return JsonPath.read(odgovor, "$.id");
     }
 
@@ -173,6 +185,7 @@ class ExpenseFlowIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("Struja i voda"))
                 .andExpect(jsonPath("$.shares.length()").value(2));
+        noviZahtjev();
 
         mockMvc.perform(get(url() + "/" + id).with(kao(ana)))
                 .andExpect(jsonPath("$.amount").value(100.0))
