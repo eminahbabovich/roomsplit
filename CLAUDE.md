@@ -59,14 +59,18 @@ kako nešto radi u verziji koju koristimo, reci to i uputi me na zvaničnu dokum
 - Testovi: bar jedan unit i jedan integracioni test po funkcionalnosti. Objasni šta
   svaki test dokazuje.
 - React: pravila hookova, API pozivi u posebnom sloju, loading/error stanja.
-- Mali, jasni git commitovi. Poruke commitova i komentari u kodu na bosanskom. Commit radim ja.
+- Git: commitove pravi Claude, a `git push` radi korisnik (push samo uz njegov izričit zahtjev).
+  Jedan commit = jedna logična cjelina (ne više sitnih commitova za isti fajl). Poruke
+  commitova i komentari u kodu na bosanskom, kratko i prirodno. Prije svakog commita
+  Claude sam pokrene `git status` i `git diff --staged`, provjeri da nema tajni
+  (`.env`, lozinke, ključevi) i korisniku ukratko kaže šta ulazi u commit. Prepravljanje
+  već pushane historije (`rebase`, `force push`) samo uz izričito odobrenje.
 
 # Sigurnost (obavezno)
 
 - Nikad ne upisuj stvarne tajne (lozinke, JWT secret, ključeve) u kod ni u fajlove koji
   idu na GitHub. Koristi varijable okruženja; u repo ide samo `.env.example` s lažnim vrijednostima.
 - Ne čitaj, ne ispisuj i ne mijenjaj `.env*` i `application-local.*` fajlove.
-- Prije svakog commita me podsjeti da pokrenem `git status` i `git diff --staged`.
 - Ne pokreći destruktivne komande (brisanje foldera, `git reset --hard`, `git push --force`)
   bez mog izričitog odobrenja.
 
@@ -89,6 +93,10 @@ Dokumentaciju održavaj uporedo s kodom, ne na kraju:
 - `docs/ODLUKE.md`: ključne tehničke odluke s obrazloženjem (zašto Flyway, DTO, BigDecimal...).
 - Poslije svake funkcionalnosti ažuriraj README (status) i relevantne `docs/` fajlove.
 - Ne izmišljaj live linkove, screenshotove ni rezultate; stavi jasan placeholder.
+- Stil pisanja (dnevnik, README, docs, komentari, poruke commitova): piši u mom stilu,
+  prirodnim i jednostavnim bosanskim, kao čovjek koji piše svojim riječima i zna šta radi.
+  Ne tako formalno i "korporativno", ali ni nestručno. Kratke rečenice, konkretno, bez
+  patetike i bez nabrajanja radi nabrajanja. Dnevnik je u prvom licu.
 
 # Zabrane
 
