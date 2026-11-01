@@ -183,9 +183,11 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   smije zavisiti od podataka u browseru. Isto važi za nazive mjeseci.
 - **Podjela troška se uživo prikazuje u formi** istim algoritmom kao backend (`splitEqual`, u feninzima). To je samo
   pregled; konačan račun uvijek radi server.
-- **JWT u `localStorage`.** Jednostavno i preživi osvježavanje stranice. Cijena: ako neko ubaci skriptu (XSS),
-  može pročitati token. Alternativa je httpOnly cookie, ali traži CSRF zaštitu i promjene na backendu. Za ovaj projekat
-  biram jednostavnost, uz kratak istek tokena (60 min).
+- **JWT u `sessionStorage`, ne u `localStorage`.** Prva verzija je koristila `localStorage`, a on je zajednički za sve
+  tabove istog sajta: prijava drugog korisnika u drugom tabu prepiše token i poslije osvježavanja svi tabovi postanu
+  zadnji korisnik. `sessionStorage` je odvojen po tabu, a i dalje preživi osvježavanje. Cijena: novi tab traži novu
+  prijavu, i zatvaranje taba odjavljuje. Obje opcije su čitljive skripti (XSS); alternativa je httpOnly cookie, ali traži
+  CSRF zaštitu i promjene na backendu. Za ovaj projekat biram jednostavnost, uz kratak istek tokena (60 min).
 - **`useAsync` umjesto biblioteke za podatke** (npr. TanStack Query): jedan mali hook pokriva loading, grešku i
   ponovno učitavanje. Nema keširanja između stranica, što ovdje ne smeta.
 - **Nativni `<dialog>` za modale:** browser sam daje focus trap i Esc.

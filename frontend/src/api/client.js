@@ -3,10 +3,15 @@
 
 const TOKEN_KEY = 'roomsplit.token'
 
+// sessionStorage umjesto localStorage: preživi osvježavanje stranice, ali je odvojen po tabu.
+// Kod localStorage-a svi tabovi dijele isti token, pa prijava u jednom tabu prepiše ostale.
+// Stari token iz localStorage-a brišemo, da ne ostane viška.
+localStorage.removeItem(TOKEN_KEY)
+
 export const tokenStore = {
-  get: () => localStorage.getItem(TOKEN_KEY),
-  set: (token) => localStorage.setItem(TOKEN_KEY, token),
-  clear: () => localStorage.removeItem(TOKEN_KEY),
+  get: () => sessionStorage.getItem(TOKEN_KEY),
+  set: (token) => sessionStorage.setItem(TOKEN_KEY, token),
+  clear: () => sessionStorage.removeItem(TOKEN_KEY),
 }
 
 // Greška s API-ja. fieldErrors je mapa { polje: poruka } koju vraća Bean Validation.

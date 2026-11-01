@@ -167,3 +167,12 @@ Format unosa:
   - Fiksirao sam `opsz` osu fonta na veliku vrijednost za sve naslove, pa su riječi u malim naslovima izgledale zbijeno. Sad font sam bira optičku veličinu.
   - Pečat na računu u hero sekciji prekrivao je iznos, a drugi račun je bio gotovo skriven iza prvog. Našao sam to tek na screenshotu, ne u kodu.
   - Cijeli UI sam provjerio samo s lažnim API-jem i izmišljenim podacima. S pravim backendom ga tek treba proći.
+
+---
+
+## 2026-11-01 (nedjelja, 14:54) - Faza 5 završena: provjera s pravim backendom
+
+- **Naučio sam:**
+  - `localStorage` je zajednički za sve tabove istog sajta, pa prijava drugog korisnika u drugom tabu prepiše token prvog. Poslije osvježavanja svi tabovi postanu zadnji prijavljeni korisnik. `sessionStorage` je odvojen po tabu i opet preživi osvježavanje, pa sam prešao na njega. Cijena je da novi tab traži novu prijavu.
+  - Pravi backend je prošao sve scenarije koje sam prije vidio samo na lažnom API-ju: jednaka podjela, ostatak od feninga, tačni iznosi, balansi, najmanji broj uplata, uplata do pečata KVIT.
+- **Greške koje sam napravio:** token sam u prvoj verziji čuvao u `localStorage`, pa testiranje s tri korisnika u istom browseru nije radilo kako treba. Tu grešku sam našao tek kad sam probao s više korisnika odjednom, a ne dok sam pisao kod.

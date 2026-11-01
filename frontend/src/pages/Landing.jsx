@@ -9,9 +9,9 @@ import { formatKM, fromFeninzi, parseAmount, splitEqual, toFeninzi } from '../li
 
 function HeroReceipt() {
   const rows = [
-    ['Ana', '33,34'],
+    ['Emin', '33,34'],
     ['Emir', '33,33'],
-    ['Sara', '33,33'],
+    ['Tarik', '33,33'],
   ]
   return (
     <div className="hero-art" aria-hidden="true">
@@ -20,7 +20,7 @@ function HeroReceipt() {
       <div className="receipt receipt-main">
         <p className="receipt-tag mono">primjer</p>
         <h3>Namirnice</h3>
-        <p className="receipt-sub mono">01.11. · platila Ana</p>
+        <p className="receipt-sub mono">01.11. · platila Emin</p>
         <div className="receipt-rule" />
         <div className="receipt-line receipt-line-big" style={{ '--d': '0.9s' }}>
           <span>Ukupno</span>
@@ -151,7 +151,7 @@ function HowItWorks() {
 
 /* ---------- kalkulator ---------- */
 
-const NAMES = ['Ana', 'Emir', 'Sara', 'Tarik', 'Lejla', 'Mak', 'Amina', 'Haris']
+const NAMES = ['Emin', 'Emir', 'Tarik', 'Lejla', 'Mak', 'Amina', 'Haris', 'Sead']
 
 function SplitPlayground() {
   const [amountText, setAmountText] = useState('100,00')
@@ -237,22 +237,22 @@ function SplitPlayground() {
 /* ---------- najmanje uplata ---------- */
 
 const PEOPLE = [
-  ['Ana', 0, '+40,00'],
+  ['Emin', 0, '+40,00'],
   ['Emir', 1, '+20,00'],
-  ['Sara', 2, '−30,00'],
+  ['Tarik', 2, '−30,00'],
   ['Mak', 3, '−30,00'],
 ]
 
 const NAIVE = [
-  ['Sara', 'Ana', '20,00'],
-  ['Sara', 'Emir', '10,00'],
-  ['Mak', 'Ana', '20,00'],
+  ['Tarik', 'Emin', '20,00'],
+  ['Tarik', 'Emir', '10,00'],
+  ['Mak', 'Emin', '20,00'],
   ['Mak', 'Emir', '10,00'],
 ]
 
 const MINIMAL = [
-  ['Sara', 'Ana', '30,00'],
-  ['Mak', 'Ana', '10,00'],
+  ['Tarik', 'Emin', '30,00'],
+  ['Mak', 'Emin', '10,00'],
   ['Mak', 'Emir', '20,00'],
 ]
 
