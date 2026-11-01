@@ -172,9 +172,9 @@ tačno na originalni iznos, bez gubitka feninga).
 | GET | `/api/groups/{id}/expenses?page=&size=&from=&to=&category=` | lista, paginirano i filtrirano | ✅ |
 | GET | `/api/groups/{id}/expenses/{eid}` | jedan trošak | ✅ |
 | PUT/DELETE | `/api/groups/{id}/expenses/{eid}` | izmjena (200) / brisanje (204), samo autor, ostali članovi 403 | ✅ |
-| GET | `/api/groups/{id}/balances` | balans svakog člana (404 nisi član) | ⏳ čeka test s bazom |
-| GET | `/api/groups/{id}/settle-suggestions` | predložene uplate, najmanji mogući broj | ⏳ čeka test s bazom |
-| POST | `/api/groups/{id}/settlements` | zabilježi uplatu (201; 400 sam sebi ili nečlanu; 404 nisi član) | ⏳ čeka test s bazom |
+| GET | `/api/groups/{id}/balances` | balans svakog člana (404 nisi član) | ✅ |
+| GET | `/api/groups/{id}/settle-suggestions` | predložene uplate, najmanji mogući broj | ✅ |
+| POST | `/api/groups/{id}/settlements` | zabilježi uplatu (201; 400 sam sebi ili nečlanu; 404 nisi član) | ✅ |
 
 Svaki endpoint grupe provjerava da je prijavljeni korisnik član te grupe.
 

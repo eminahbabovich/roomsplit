@@ -65,7 +65,7 @@ Invarijanta: za svaki trošak `SUM(share_amount) = amount`.
 | 1 | Temelji | Setup (Initializr, Postgres u Dockeru, Flyway), prvi endpoint, prvi test | Spring Boot anatomija, slojevi, DI, `@RestController`, DTO | ✅ gotovo |
 | 2 | Autentikacija | Korisnici + Spring Security + JWT | Filter chain, `PasswordEncoder`, stateless auth, CORS | ✅ gotovo |
 | 3 | Grupe | Grupe i članstvo, autorizacija po grupi | JPA relacije, `@Transactional`, validacija, `@RestControllerAdvice` | ✅ gotovo |
-| 4 | Troškovi i balansi | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija | |
+| 4 | Troškovi i balansi | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija | ✅ gotovo |
 | 5 | Frontend i deploy | React UI + **prvi deploy** (Render/Railway + Vercel/Netlify, Neon/Supabase) | CORS u produkciji, env varijable, Dockerfile, DNS | |
 
 Pravilo: prvi deploy se radi u fazi 5, ne na kraju cijelog portfolija. Prvi deploy uvijek

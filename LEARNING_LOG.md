@@ -138,3 +138,12 @@ Format unosa:
   - `@WebMvcTest` može testirati dva kontrolera odjednom: `@WebMvcTest({A.class, B.class})`.
   - U integracionom testu opet koristim `flush` + `clear` između zahtjeva, da svaki zahtjev bude kao zasebna transakcija.
 - **Greške koje sam napravio:** u ovom koraku nijedna. Integracioni test `BalanceFlowIntegrationTest` (s pravom bazom) još nisam pokrenuo, pa balanse i uplate ne smijem označiti kao gotove dok ne prođe.
+
+---
+
+## 2026-11-01 (nedjelja, 14:02) - Faza 4 završena: provjera s bazom
+
+- **Naučio sam:**
+  - Svih 147 testova prolazi s pravom bazom, uključujući integracioni test balansa i uplata. Tek tada faza 4 ide na gotovo.
+  - `.env` je u korijenu projekta, a ne u `backend/`. Varijable učitavam iz korijena, pa tek onda idem u `backend` i pokrećem `.\mvnw.cmd test`.
+- **Greške koje sam napravio:** komande za učitavanje `.env` pokrenuo sam iz foldera `backend`, pa su `cd backend` i `Get-Content .env` pali s "Cannot find path". Test je krenuo bez varijabli okruženja. Pouka: prije učitavanja provjerim u kojem sam folderu.
