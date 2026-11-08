@@ -28,7 +28,7 @@ public class SettlementService {
         Map<Long, User> members = groupAccess.membersOf(groupId, userId);
 
         if (request.toUser().equals(userId)) {
-            throw new InvalidRequestException("Ne možeš zabilježiti uplatu samom sebi");
+            throw new InvalidRequestException("Ne možeš zabilježiti uplatu sebi");
         }
         User recipient = members.get(request.toUser());
         if (recipient == null) {

@@ -65,7 +65,7 @@ function JoinGroupCard() {
     setSubmitting(true)
     try {
       const group = await groupsApi.join(code.trim().toUpperCase())
-      toast.success(`Dobro došao u „${group.name}“.`)
+      toast.success(`Dobro došao/la u „${group.name}“.`)
       navigate(`/grupe/${group.id}`)
     } catch (err) {
       setError(err instanceof ApiError ? err : new ApiError(0, 'Pridruživanje nije uspjelo.'))

@@ -62,7 +62,7 @@ function GroupView({ id }) {
   if (group.error?.status === 404) {
     return (
       <NotFound title="Ova grupa ne postoji">
-        Ili nisi njen član. Provjeri kod koji ti je poslao cimer.
+        Ili ne pripadaš toj grupi. Provjeri kod koji ti je poslao cimer.
       </NotFound>
     )
   }

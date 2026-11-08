@@ -68,7 +68,7 @@ export function BalancesTab({ balances, suggestions, me, onSettle }) {
               <h2 id="bal-title" className="section-title">
                 Ko kome duguje
               </h2>
-              <p className="section-note">Zeleno: drugi duguju njemu. Crveno: on duguje drugima.</p>
+              <p className="section-note">Zeleno: drugi duguju toj osobi. Crveno: ta osoba duguje drugima.</p>
             </div>
             <div className="card pad">
               <BalanceBars balances={balances.data} me={me} />
@@ -121,7 +121,7 @@ export function BalancesTab({ balances, suggestions, me, onSettle }) {
             )}
 
             <div className="settle-extra">
-              <p>Uplatu možeš zabilježiti samo u svoje ime. Kad ti neko plati, on to upiše kod sebe.</p>
+              <p>Uplatu možeš zabilježiti samo u svoje ime. Kad ti neko plati, ta osoba to upiše kod sebe.</p>
               <Button size="sm" onClick={() => onSettle(null)}>
                 Zabilježi drugu uplatu
               </Button>

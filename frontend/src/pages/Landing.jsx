@@ -20,7 +20,7 @@ function HeroReceipt() {
       <div className="receipt receipt-main">
         <p className="receipt-tag mono">primjer</p>
         <h3>Namirnice</h3>
-        <p className="receipt-sub mono">01.11. · platila Emin</p>
+        <p className="receipt-sub mono">01.11. · plaćeno: Emin</p>
         <div className="receipt-rule" />
         <div className="receipt-line receipt-line-big" style={{ '--d': '0.9s' }}>
           <span>Ukupno</span>
@@ -216,7 +216,7 @@ function SplitPlayground() {
                       <span>{NAMES[i]}</span>
                       <span className="leader" />
                       <span className="mono">{formatKM(fromFeninzi(s))}</span>
-                      {bumped && <em title="Dobio je fening viška iz ostatka">+1 fening</em>}
+                      {bumped && <em title="Ovdje ide fening viška iz ostatka">+1 fening</em>}
                     </li>
                   )
                 })}

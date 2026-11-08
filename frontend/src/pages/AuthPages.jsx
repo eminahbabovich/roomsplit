@@ -91,7 +91,7 @@ export function Login() {
 
   return (
     <AuthShell
-      title="Dobro došao nazad"
+      title="Dobro došao/la nazad"
       lead="Prijavi se i vidi ko je šta platio dok te nije bilo."
       quote="Računi su kao sudovi: bolje ih je riješiti odmah nego čekati da se nakupe."
       footer={
