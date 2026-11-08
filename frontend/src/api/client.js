@@ -3,6 +3,11 @@
 
 const TOKEN_KEY = 'roomsplit.token'
 
+// Adresa backenda. Lokalno je prazna: zovemo relativno /api, a Vite proxy to šalje na port 8080.
+// U produkciji (Vercel) frontend i backend su na različitim domenama, pa se u build-u postavi
+// VITE_API_URL (npr. https://roomsplit-api.onrender.com, bez kose crte na kraju).
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+
 // sessionStorage umjesto localStorage: preživi osvježavanje stranice, ali je odvojen po tabu.
 // Kod localStorage-a svi tabovi dijele isti token, pa prijava u jednom tabu prepiše ostale.
 // Stari token iz localStorage-a brišemo, da ne ostane viška.
@@ -39,7 +44,7 @@ export async function api(path, { method = 'GET', body, auth = true } = {}) {
 
   let response
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`${API_BASE}/api${path}`, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,

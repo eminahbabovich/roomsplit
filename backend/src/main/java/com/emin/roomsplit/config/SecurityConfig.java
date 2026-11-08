@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
+                        // Hosting (Render) zove health check bez tokena; vraća samo {"status":"UP"}
+                        .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .anyRequest().authenticated())
                 // Čita "Authorization: Bearer <token>" i provjerava potpis i istek preko JwtDecoder-a
                 .oauth2ResourceServer(oauth2 -> oauth2

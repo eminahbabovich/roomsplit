@@ -1,0 +1,7 @@
+# Ne šalji u Docker build: nepotrebno, veliko ili tajno
+target
+.git
+.idea
+.env
+.env.*
+HELP.md
