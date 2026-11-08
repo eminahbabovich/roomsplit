@@ -67,17 +67,17 @@ Invarijanta: za svaki trošak `SUM(share_amount) = amount`.
 | 3 | Grupe | Grupe i članstvo, autorizacija po grupi | JPA relacije, `@Transactional`, validacija, `@RestControllerAdvice` | ✅ gotovo |
 | 4 | Troškovi i balansi | Troškovi, podjela, balansi, algoritam poravnanja | `BigDecimal`, zaokruživanje, unit testovi algoritma, paginacija | ✅ gotovo |
 | 5 | Frontend (lokalno) | React UI koji radi lokalno sa cijelim backendom: prijava, grupe, troškovi, balansi, uplate | Pravila hookova, API sloj, JWT u klijentu, zaštićene rute, loading/error stanja | ✅ gotovo |
-| 6 | Izmjene i deploy | Ispravke i dorade UI-ja poslije pregleda + **prvi deploy** (Render/Railway + Vercel/Netlify, Neon/Supabase) | CORS u produkciji, env varijable, Dockerfile, DNS | |
+| 6 | Izmjene i deploy | Ispravke i dorade UI-ja poslije pregleda + **prvi deploy** (Render/Railway + Vercel/Netlify, Neon/Supabase) | CORS u produkciji, env varijable, Dockerfile, DNS | ✅ gotovo |
 
 Pravilo: prvi deploy se radi u fazi 6, ne na kraju cijelog portfolija. Prvi deploy uvijek
 donese neočekivane greške.
 
 ## Definicija "gotovo" za Projekat 1
 
-- [ ] Sve MVP funkcionalnosti rade u produkciji (live URL)
-- [ ] Barem 15 testova (unit + integracioni), posebno za algoritam podjele
+- [x] Sve MVP funkcionalnosti rade u produkciji (live URL)
+- [x] Barem 15 testova (unit + integracioni), posebno za algoritam podjele
 - [ ] README: opis, screenshotovi, arhitektura, kako pokrenuti lokalno, live link
-- [ ] Nema tajni u repozitoriju (provjereno)
+- [x] Nema tajni u repozitoriju (provjereno)
 - [ ] Mogu bez gledanja objasniti: tok zahtjeva, JWT prijavu, relacije, zašto BigDecimal
 
 ---

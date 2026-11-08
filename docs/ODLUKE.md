@@ -213,3 +213,25 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
   na backendu obavezan podatak u produkciji. Varijable `VITE_*` završavaju u JavaScriptu koji vidi svako, pa tu nikad ne ide tajna.
 - **`vercel.json` s rewrite pravilom.** React Router radi u browseru, a server ne zna za rute poput `/grupe/5`. Bez pravila
   osvježavanje stranice na toj adresi vrati 404; s pravilom svaka putanja vrati `index.html`.
+
+## 18. Hosting: Neon, Render i Vercel na besplatnim planovima
+
+- **Tri servisa, svaki za jedan posao.** Baza je na Neonu (PostgreSQL 17), backend na Renderu iz `Dockerfile`, frontend na Vercelu.
+  Sve je u Frankfurtu osim frontenda, da backend i baza budu blizu jedno drugom. Zašto zasebno: svaki ima besplatan plan i
+  može se zamijeniti bez diranja ostalih (promijeni se samo adresa u varijabli okruženja).
+- **Cijena besplatnog plana je uspavljivanje.** Render besplatni servis ima 0,1 CPU i 512 MB RAM-a i gasi se kad niko ne
+  koristi sajt. Neon baza se isto "gasi na nulu" kad je neaktivna. Prvi zahtjev poslije pauze zato čeka da se probude oba, i to
+  može trajati i do minutu. Za portfolio je to prihvatljivo, pa je napomena u README-u. Alternativa je plaćeni plan (Render
+  starter, $7 mjesečno), što za sada nije potrebno.
+- **Direktna veza na bazu, ne ona preko poolera.** Neon nudi i adresu s `-pooler` u imenu. Uzeo sam direktnu, jer Flyway pri
+  startu zaključava bazu, a to ne mora raditi preko dijeljenih veza. Ovo je opreznost, nisam testirao poolera.
+- **Jedna dozvoljena adresa frontenda (CORS).** `CORS_ALLOWED_ORIGINS` sadrži tačnu adresu na Vercelu, bez kose crte na kraju.
+  Ako se adresa frontenda promijeni, backend se mora prepraviti, a može imati i više adresa odvojenih zarezom.
+- **Adresa backenda se ugradi u frontend pri buildu** (`VITE_API_URL`). Zato se ime Render servisa ne mijenja bez novog builda
+  frontenda.
+- **Render gleda samo `backend/`.** Root Directory je `backend`, pa se i `Dockerfile` i kontekst builda računaju od tog foldera.
+  Promjena samo u frontendu ili dokumentaciji ne bi trebala pokretati rebuild backenda.
+- **Tajne samo u postavkama hostinga.** `DB_PASSWORD` i `JWT_SECRET` su upisani u Render, ne u kod ni u fajl u repou.
+  Produkcijski `JWT_SECRET` je nov i različit od lokalnog, da ga niko ne može izvesti iz razvojnog okruženja.
+- **Prije deploya sam pregledao `SecurityConfig`, `Dockerfile` i frontend klijent** i našao tri stvari koje bi pale pri prvom
+  startu (health iza prijave, `mvnw` bez prava izvršavanja, relativni `/api`). Zbog toga je prvi deploy prošao bez pada builda.

@@ -4,7 +4,9 @@ Aplikacija za dijeljenje zajedničkih troškova među cimerima i prijateljima.
 Vodi troškove u grupi, računa ko kome koliko duguje i predlaže najmanji broj
 uplata za poravnanje.
 
-> **Status:** u izradi (faze 1 do 5 od 6 gotove; u fazi 6 je kod spreman za deploy, hosting se postavlja). **Live demo:** _uskoro_
+> **Status:** faze 1 do 6 gotove, aplikacija je live. **Live demo:** https://roomsplit-seven.vercel.app
+>
+> Radi na besplatnim planovima, pa se backend i baza uspavaju kad niko nije aktivan. Prvi zahtjev poslije pauze može trajati i do minutu.
 
 ## Problem
 
@@ -26,14 +28,14 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Balansi, prijedlog poravnanja (minimalan broj uplata) i bilježenje uplata | ✅ gotovo |
 | React UI: početna, prijava, grupe, troškovi, balansi, uplate | ✅ gotovo |
 | Priprema za deploy: Dockerfile (multi-stage), konfiguracija iz varijabli okruženja, javni health check, `VITE_API_URL` | ✅ gotovo |
-| Prvi deploy (baza, backend, frontend) i live link | ⏳ faza 6: u toku |
+| Deploy: Neon (baza), Render (backend u Dockeru), Vercel (frontend) | ✅ gotovo, provjereno na live sajtu |
 
 ## Tehnologije
 
 - **Backend:** Java 21, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA,
   Bean Validation, Lombok, PostgreSQL 17, Flyway, JUnit 5, MockMvc
 - **Frontend:** React 19, Vite, React Router, običan CSS (bez UI biblioteke), fontovi Fraunces, Figtree i DM Mono (lokalno, preko `@fontsource`)
-- **Infrastruktura:** Docker Compose (lokalna baza), Dockerfile za backend; hosting _(upisati kad bude postavljeno)_
+- **Infrastruktura:** Docker Compose (lokalna baza), Dockerfile za backend; Neon (PostgreSQL), Render (backend), Vercel (frontend)
 
 ## Arhitektura
 
@@ -105,6 +107,18 @@ cd backend
 docker build -t roomsplit-api .
 docker run -p 8080:8080 -e DB_URL=... -e DB_USER=... -e DB_PASSWORD=... -e JWT_SECRET=... roomsplit-api
 ```
+
+## Deploy
+
+| Dio | Gdje | Napomena |
+|---|---|---|
+| Frontend | Vercel | Root `frontend`, preset Vite. `VITE_API_URL` pokazuje na backend. |
+| Backend | Render (Docker, Frankfurt) | Root `backend`, `Dockerfile`. Health check na `/api/health`. |
+| Baza | Neon (PostgreSQL 17, Frankfurt) | Tabele pravi Flyway pri prvom startu. |
+
+Tajne (`DB_PASSWORD`, `JWT_SECRET`) postoje samo u postavkama hostinga, nikad u repou. Produkcija ima svoj `JWT_SECRET`,
+različit od lokalnog. Backend dozvoljava samo adresu frontenda (`CORS_ALLOWED_ORIGINS`). Dijagram rasporeda je u
+[docs/ARHITEKTURA.md](docs/ARHITEKTURA.md), a razlozi u [docs/ODLUKE.md](docs/ODLUKE.md).
 
 ## Struktura projekta
 

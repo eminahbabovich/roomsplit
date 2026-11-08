@@ -250,7 +250,7 @@ U razvoju Vite proxy (`vite.config.js`) prosljeđuje `/api` na `localhost:8080` 
 
 ## Deploy
 
-Planirani raspored (u fazi 6 se postavlja; ovdje je samo šema, ne tvrdnja da već radi):
+Raspored na live sajtu (backend i baza su u Frankfurtu):
 
 ```mermaid
 flowchart LR

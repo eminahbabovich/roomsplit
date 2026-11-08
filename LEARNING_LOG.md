@@ -188,3 +188,26 @@ Format unosa:
   - Bento mreža (CSS grid sa 6 kolona i `grid-column: span N`) mora imati broj kartica koji popunjava redove, inače jedna kartica ostane sama (4+2, 2+4, 3+3).
   - `vite.config.js` radi u Nodeu, pa mu treba `import process from 'node:process'`, jer ESLint u ovom projektu poznaje samo browser globale.
 - **Greške koje sam napravio:** u prvoj verziji nove mreže šesta kartica je ostala sama u redu. Pečat \"do feninga\" je poslije promjene fonta pao preko reda s iznosom, jer je račun postao niži. Obje stvari sam našao tek na screenshotu.
+
+---
+
+## 2026-11-08 (nedjelja, 13:38) - Faza 6: prvi deploy (Neon, Render, Vercel)
+
+- **Naučio sam:**
+  - Deploy ima tri dijela: baza na Neonu, backend u Docker kontejneru na Renderu i frontend na Vercelu. Svaki radi jedan posao, a veže ih samo adresa (`DB_URL`, `VITE_API_URL`).
+  - Frontend i backend su sad na različitim domenama, pa backend mora izričito dozvoliti origin frontenda (`CORS_ALLOWED_ORIGINS`). Poređenje je tačno po tekstu: kosa crta na kraju adrese je već druga adresa.
+  - `VITE_` varijable se ugrade u JavaScript pri buildu i vidi ih svako, pa tu nikad ne ide tajna. Ako se promijene, treba novi build.
+  - JDBC adresa izgleda drugačije od one koju daje Neon: `jdbc:postgresql://host/baza?sslmode=require`, a korisnik i lozinka idu zasebno. `sslmode=require` je obavezan jer Neon odbija nešifrovanu vezu.
+  - Pri prvom startu na praznoj bazi Flyway sam napravi tabele. U logu se vidi "Schema history table does not exist yet", pa migracije. Zato je baza ostala prazna, bez ručnog posla.
+  - Multi-stage Dockerfile: JDK samo za build, u završnoj slici samo JRE, i aplikacija radi kao običan korisnik, ne kao root. Port dolazi iz varijable `PORT`.
+  - Health check mora biti javan, jer ga hosting zove bez tokena.
+  - Besplatni planovi se uspavaju (Render i Neon), pa je prvi zahtjev poslije pauze spor. To je cijena besplatnog hostinga, a ne greška.
+  - Linija `Co-Authored-By` u poruci commita ukloni se prepisivanjem historije (`git filter-branch --msg-filter`), a onda `git push --force-with-lease`. Prije toga napravim backup s `git bundle`. Svi hash-evi tih commitova se promijene.
+- **Greške koje sam napravio:**
+  - `GET /api/health` je bio iza prijave, pa bi Render health check stalno dobijao 401. Našao sam to prije deploya, kad sam pregledao `SecurityConfig`.
+  - `mvnw` je u gitu bez prava izvršavanja (Windows), pa bi `RUN ./mvnw` u Dockerfileu pao s `Permission denied`. Dodao sam `chmod +x`.
+  - Frontend je zvao relativni `/api`, što radi samo uz Vite proxy lokalno. Za produkciju je trebala `VITE_API_URL`.
+  - Na Renderu mi je prvo bio izabran plaćeni plan ($7 mjesečno). Primijetio sam to na traci pri dnu i prebacio na Free prije prvog deploya.
+  - U tekstu sajta je pisalo "platila Emin", "njemu" i "dobro došao", što pretpostavlja spol. Zamijenio sam to neutralnim oblicima ili oblikom s oba roda (došao/la).
+  - Vidio sam staru verziju sajta poslije deploya i pomislio da deploy nije prošao. Bio je keš browsera; novi tekst je već bio na serveru.
+  - U screenshotovima za README je bio moj pravi email i Windows prozorčić sa ikonama, a demo podaci su loši ("Test stan", "rezije" bez velikog slova, "Novi trosak" bez dijakritika). Sliku s emailom sam sklonio iz repoa, a ostale ću napraviti ponovo.
