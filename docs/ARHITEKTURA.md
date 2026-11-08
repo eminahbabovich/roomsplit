@@ -25,24 +25,26 @@ flowchart LR
 
 Paketi su organizovani po funkcionalnosti (npr. `com.emin.roomsplit.health`), a ne po tehničkom sloju.
 
-## Tok zahtjeva (primjer: `GET /api/health`)
+## Tok zahtjeva (primjer: `GET /api/groups`)
 
 ```mermaid
 sequenceDiagram
     participant K as Klijent
     participant S as Security filter
-    participant C as HealthController
-    K->>S: GET /api/health
-    alt korisnik nije prijavljen
+    participant C as GroupController
+    K->>S: GET /api/groups
+    alt nema važećeg tokena
         S-->>K: 401 Unauthorized
-    else korisnik je prijavljen
+    else token je važeći
         S->>C: zahtjev prosljeđen
-        C-->>K: 200 {"status":"UP"} (HealthResponse record)
+        C-->>K: 200 lista grupa (DTO)
     end
 ```
 
-Napomena: 401 vraća Security filter prije kontrolera, pa 401 samo po sebi ne dokazuje da je
-kontroler ispravno povezan. Zato endpoint pokriva test (`HealthControllerTest`) s oba slučaja.
+Izuzeci su javne rute u `SecurityConfig`: registracija, prijava i `GET /api/health`. Health vraća samo
+`{"status":"UP"}`, a koristi ga hosting za provjeru da servis radi. Napomena: 401 vraća Security filter prije
+kontrolera, pa 401 samo po sebi ne dokazuje da je kontroler ispravno povezan. Zato svaki kontroler ima test koji
+provjerava i uspješan slučaj (`HealthControllerTest` dokazuje da je health dostupan bez tokena).
 
 ## Autentikacija (JWT)
 
@@ -245,3 +247,20 @@ Rute: `/` (početna), `/prijava`, `/registracija`, a iza prijave `/grupe` i `/gr
 (tab u adresi: `?tab=balansi` ili `?tab=clanovi`).
 
 U razvoju Vite proxy (`vite.config.js`) prosljeđuje `/api` na `localhost:8080` (cilj se može promijeniti varijablom `API_TARGET`).
+
+## Deploy
+
+Planirani raspored (u fazi 6 se postavlja; ovdje je samo šema, ne tvrdnja da već radi):
+
+```mermaid
+flowchart LR
+    B[Browser] -->|HTML, JS, CSS| V[Vercel: React build]
+    B -->|HTTPS, /api, JWT| R[Render: Docker kontejner, Spring Boot]
+    R -->|JDBC| N[(Neon: PostgreSQL)]
+```
+
+- **Frontend** je statičan build (`npm run build`). `VITE_API_URL` kaže browseru gdje je backend.
+- **Backend** se pokreće iz `backend/Dockerfile`. Konfiguraciju dobija iz varijabli okruženja
+  (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `CORS_ALLOWED_ORIGINS`, `PORT`).
+- **Baza**: pri svakom startu Flyway primijeni migracije koje fale, pa je nova prazna baza spremna bez ručnog posla.
+- Browser zove backend direktno (druga domena), pa `CORS_ALLOWED_ORIGINS` mora biti tačna adresa frontenda.

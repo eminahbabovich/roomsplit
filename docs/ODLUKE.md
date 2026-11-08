@@ -193,3 +193,23 @@ Za svaku odluku: šta smo izabrali, zašto i koja je alternativa. Dopunjava se u
 - **Nativni `<dialog>` za modale:** browser sam daje focus trap i Esc.
 - **Uplatu uvijek bilježi platilac.** UI nudi dugme "Platio/la sam" samo na uplatama koje je tebi predložio algoritam,
   jer backend ne dozvoljava upis uplate u tuđe ime.
+
+## 17. Priprema za deploy: Docker, health check i adresa API-ja
+
+- **Multi-stage Dockerfile.** Prva faza ima JDK i Maven i pravi `.jar`; druga ima samo JRE i kopira taj `.jar`.
+  Zašto: završna slika je manja, nema izvornog koda ni alata za build, a manje stvari u slici znači manje površine za napad.
+  `pom.xml` se kopira prije koda, pa se zavisnosti keširaju i ne skidaju ponovo pri svakoj izmjeni koda.
+  Aplikacija radi kao `appuser`, ne kao root, da provala u aplikaciju ne znači i pun pristup kontejneru.
+- **`chmod +x mvnw` u Dockerfileu.** Git s Windowsa čuva `mvnw` bez prava izvršavanja (mode 100644), pa je prvi build na Linuxu
+  pao s `Permission denied`. Popravka je u Dockerfileu, a ne u historiji.
+- **Testovi se u Docker buildu preskaču** (`-DskipTests`), jer integracioni testovi trebaju bazu. Pokreću se zasebno.
+- **`/api/health` je javan.** Hosting zove health check bez tokena. Prije je ovaj endpoint tražio prijavu i test je
+  provjeravao 401; sad test provjerava da je dostupan anonimno. Endpoint vraća samo `{"status":"UP"}`, bez podataka o sistemu.
+  Alternativa je Spring Boot Actuator, ali to je nova zavisnost za jedan JSON odgovor.
+- **Port iz varijable `PORT`.** Hosting kaže na kojem portu da slušamo; lokalno ostaje 8080. Zato `ENTRYPOINT` koristi
+  shell formu s `exec` (da se `${PORT}` razriješi, a Java ipak dobija signale za gašenje).
+- **`VITE_API_URL` u frontendu.** Lokalno frontend zove relativno `/api`, a Vite proxy to prosljeđuje. U produkciji su
+  frontend (Vercel) i backend (Render) na različitim domenama, pa se adresa backenda ugradi u build. Zato je `CORS_ALLOWED_ORIGINS`
+  na backendu obavezan podatak u produkciji. Varijable `VITE_*` završavaju u JavaScriptu koji vidi svako, pa tu nikad ne ide tajna.
+- **`vercel.json` s rewrite pravilom.** React Router radi u browseru, a server ne zna za rute poput `/grupe/5`. Bez pravila
+  osvježavanje stranice na toj adresi vrati 404; s pravilom svaka putanja vrati `index.html`.

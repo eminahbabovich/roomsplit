@@ -4,7 +4,7 @@ Aplikacija za dijeljenje zajedničkih troškova među cimerima i prijateljima.
 Vodi troškove u grupi, računa ko kome koliko duguje i predlaže najmanji broj
 uplata za poravnanje.
 
-> **Status:** u izradi (faze 1 do 5 od 6 gotove, sljedeća: Izmjene i deploy). **Live demo:** _uskoro_
+> **Status:** u izradi (faze 1 do 5 od 6 gotove; u fazi 6 je kod spreman za deploy, hosting se postavlja). **Live demo:** _uskoro_
 
 ## Problem
 
@@ -25,14 +25,15 @@ koliko duguje. RoomSplit vodi sve troškove na jednom mjestu, tačno računa bal
 | Troškovi (jednaka podjela i tačni iznosi), paginacija, filtriranje | ✅ gotovo |
 | Balansi, prijedlog poravnanja (minimalan broj uplata) i bilježenje uplata | ✅ gotovo |
 | React UI: početna, prijava, grupe, troškovi, balansi, uplate | ✅ gotovo |
-| Izmjene UI-ja i prvi deploy | ⏳ faza 6: Izmjene i deploy |
+| Priprema za deploy: Dockerfile (multi-stage), konfiguracija iz varijabli okruženja, javni health check, `VITE_API_URL` | ✅ gotovo |
+| Prvi deploy (baza, backend, frontend) i live link | ⏳ faza 6: u toku |
 
 ## Tehnologije
 
 - **Backend:** Java 21, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA,
   Bean Validation, Lombok, PostgreSQL 17, Flyway, JUnit 5, MockMvc
 - **Frontend:** React 19, Vite, React Router, običan CSS (bez UI biblioteke), fontovi Fraunces, Figtree i DM Mono (lokalno, preko `@fontsource`)
-- **Infrastruktura:** Docker Compose (lokalna baza); deploy _(upisati kad bude postavljeno)_
+- **Infrastruktura:** Docker Compose (lokalna baza), Dockerfile za backend; hosting _(upisati kad bude postavljeno)_
 
 ## Arhitektura
 
@@ -81,11 +82,35 @@ Potrebno: Java 21, Docker Desktop, Node.js.
 
 Na Linuxu/macOS-u koristi `./mvnw` umjesto `.\mvnw.cmd`.
 
+## Varijable okruženja
+
+Nijedna vrijednost ne piše u kodu. Backend ih čita pri startu:
+
+| Varijabla | Gdje | Opis |
+|---|---|---|
+| `JWT_SECRET` | backend | Ključ za potpis tokena, najmanje 32 znaka. Obavezna. |
+| `DB_URL`, `DB_USER`, `DB_PASSWORD` | backend | Veza na bazu u produkciji (npr. `jdbc:postgresql://host/db`). Lokalno ih nema pa se koristi `POSTGRES_*` iz `.env`. |
+| `CORS_ALLOWED_ORIGINS` | backend | Adresa frontenda koja smije zvati API (više njih odvojeno zarezom). Podrazumijevano `http://localhost:5173`. |
+| `PORT` | backend (kontejner) | Port na kojem server sluša; hosting ga sam postavi. Podrazumijevano 8080. |
+| `VITE_API_URL` | frontend (build) | Adresa backenda u produkciji. Lokalno prazno, jer Vite proxy šalje `/api` na port 8080. |
+
+## Backend u Dockeru
+
+`backend/Dockerfile` je multi-stage: prva faza (JDK + Maven) kompajlira, druga (samo JRE) pokreće aplikaciju kao
+običan korisnik, ne kao root. Provjereno lokalno: slika se izgradi, a kontejner s bazom odgovara na health check,
+registraciju, prijavu i CORS.
+
+```powershell
+cd backend
+docker build -t roomsplit-api .
+docker run -p 8080:8080 -e DB_URL=... -e DB_USER=... -e DB_PASSWORD=... -e JWT_SECRET=... roomsplit-api
+```
+
 ## Struktura projekta
 
 ```
 backend/    Spring Boot API (Maven)
-frontend/   React aplikacija (Vite)
+frontend/   React aplikacija (Vite), vercel.json za deploy
 docs/       Arhitektura i tehničke odluke
 docker-compose.yml   Lokalni PostgreSQL
 .env.example         Primjer varijabli okruženja (bez stvarnih tajni)
