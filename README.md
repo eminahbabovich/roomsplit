@@ -134,7 +134,18 @@ PROJECT_PLAN.md      Plan projekta po fazama
 
 ## Screenshotovi
 
-_(Dodati kad UI bude gotov.)_
+Slike su iz live aplikacije s probnim podacima. Kod za pridruživanje grupi je zamućen.
+
+![Početna stranica](docs/screenshots/01-pocetna.png)
+
+| | |
+|---|---|
+| ![Moje grupe](docs/screenshots/02-grupe.png) | ![Detalji grupe](docs/screenshots/03-grupa.png) |
+| **Moje grupe:** nova grupa ili pridruživanje kodom | **Detalji grupe:** tvoj balans, kod i tabovi |
+| ![Troškovi](docs/screenshots/04-troskovi.png) | ![Balansi i poravnanje](docs/screenshots/05-balansi.png) |
+| **Troškovi:** lista s filtriranjem po kategoriji i datumu | **Balansi:** ko kome duguje i najmanji broj uplata |
+| ![Novi trošak](docs/screenshots/06-novi-trosak.png) | ![Mobilni prikaz: balansi](docs/screenshots/07-mobilni-balansi.png) |
+| **Novi trošak:** podjela se vidi uživo, u feninzima | **Mobilni prikaz:** isti ekran na malom ekranu |
 
 ## Dnevnik učenja
 
