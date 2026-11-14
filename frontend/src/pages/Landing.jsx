@@ -103,16 +103,23 @@ function Hero() {
 
 const WORDS = ['kirija', 'struja', 'voda', 'internet', 'pizza', 'benzin', 'roštilj', 'kafa', 'namirnice', 'Netflix', 'putovanje', 'toalet papir']
 
+// Dvije iste grupe jedna do druge: kad prva izađe lijevo, druga je tačno na njenom
+// mjestu, pa skok nazad na početak ne vidiš. Svaka grupa ima riječi dva puta da bude
+// šira od ekrana i na velikim monitorima.
 function Marquee() {
-  const items = [...WORDS, ...WORDS]
+  const group = [...WORDS, ...WORDS]
   return (
     <div className="marquee" aria-hidden="true">
       <div className="marquee-track">
-        {items.map((w, i) => (
-          <span key={i}>
-            {w}
-            <i>✺</i>
-          </span>
+        {[0, 1].map((g) => (
+          <div className="marquee-group" key={g}>
+            {group.map((w, i) => (
+              <span key={i}>
+                <i data-tone={i % 3} />
+                {w}
+              </span>
+            ))}
+          </div>
         ))}
       </div>
     </div>
